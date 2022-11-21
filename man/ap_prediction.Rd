@@ -9,13 +9,13 @@ ap_prediction(time, m0, n0, P, k)
 \arguments{
 \item{time}{vector of time values, numeric (e.g. days); first should be zero}
 
-\item{m0}{amount of total methane at time zero}
+\item{m0}{pool size at time zero, as a volume}
 
-\item{n0}{amount of labeled methane at time zero}
+\item{n0}{amount of heavy isotope at time zero, as a volume}
 
-\item{P}{production rate of total methane, unit gas/unit time}
+\item{P}{production rate, unit gas/unit time}
 
-\item{k}{first-order rate constant for methane consumption, 1/unit time}
+\item{k}{first-order rate constant for consumption, 1/unit time}
 }
 \value{
 Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step

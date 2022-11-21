@@ -1,12 +1,11 @@
 
-
 #' Atom Percent Prediction
 #'
 #' @param time vector of time values, numeric (e.g. days); first should be zero
-#' @param m0 amount of total methane at time zero
-#' @param n0 amount of labeled methane at time zero
-#' @param P production rate of total methane, unit gas/unit time
-#' @param k first-order rate constant for methane consumption, 1/unit time
+#' @param m0 pool size at time zero, as a volume
+#' @param n0 amount of heavy isotope at time zero, as a volume
+#' @param P production rate, unit gas/unit time
+#' @param k first-order rate constant for consumption, 1/unit time
 #'
 #' @return Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step
 #' @export

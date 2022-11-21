@@ -1,12 +1,18 @@
 Package: PoolDilutionR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Calculate Gross Biogeochemical Flux Rates from Isotope Pool Dilution Data
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: c(person("Kendalynn A.", "Morris", 
+	        email = "kendalynn.morris@gmail.com", 
+	        role = c("cre", "aut"),
+	        comment = c(ORCID = "0000-0002-0388-6965")),
+	     person("Ben", "Bond-Lamberty", 
+	        email = "bondlamberty@pnnl.gov", 
+	        role = "ctb", 
+	        comment = c(ORCID = "0000-0001-9525-4633")))
+Description: This code calculates gross production and consumption rates from closed-system isotopic pool dilution time series data. Pool size concentrations and heavy isotope (e.g., 15N) content are measured over time and the model optimizes production rate (P) and the first order rate constant (k), by minimizing error in the model-predicted total pool size, as well as the isotopic signature. The model optimizes rates by weighting information against the signal:noise ratio of concentration and heavy-isotope signatures using measurement precision as well as the magnitude of change over time.
+    The calculations used here are based on von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.2
