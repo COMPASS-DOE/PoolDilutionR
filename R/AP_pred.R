@@ -19,9 +19,7 @@ ap_prediction <- function(time, m0, n0, P, k) {
   nt <- pfrac/kfrac - (pfrac/kfrac - n0) * exp(-kfrac * time)
   # Equation 5 (and denominator in Eq. 11):
   mt <- P/k - (P/k - m0) * exp(-k * time)
+  ap <- nt / mt * 100
 
-  tibble(mt = mt,
-         nt = nt,
-         # Modified Equation 10/11
-         AP_pred =  nt / mt * 100)
+  data.frame(mt = mt, nt = nt, AP_pred =  ap)
 }

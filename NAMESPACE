@@ -2,3 +2,4 @@
 
 export(ap_prediction)
 export(cost_function)
+export(optimize_pk)
