@@ -14,6 +14,9 @@
 #' @author K.A. Morris & B. B-L
 #' @examples
 ap_prediction <- function(time, m0, n0, P, k) {
+  if(! is.numeric(time)) stop("Time must be numeric.")
+  if(time[1] != 0.0) stop("First time value must be zero.")
+  stopifnot(all(diff(time) > 0))
   kfrac <- k * FRAC_K
   pfrac <- P * FRAC_P
   nt <- pfrac / kfrac - (pfrac / kfrac - n0) * exp(-kfrac * time)
