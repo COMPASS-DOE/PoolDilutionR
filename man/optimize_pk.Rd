@@ -12,8 +12,7 @@ optimize_pk(
   Nd,
   params,
   cost_fn = cost_function,
-  prediction_fn = ap_prediction,
-  control = list()
+  prediction_fn = ap_prediction
 )
 }
 \arguments{
