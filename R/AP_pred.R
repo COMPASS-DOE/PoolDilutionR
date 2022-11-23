@@ -16,9 +16,9 @@
 ap_prediction <- function(time, m0, n0, P, k) {
   kfrac <- k * FRAC_K
   pfrac <- P * FRAC_P
-  nt <- pfrac/kfrac - (pfrac/kfrac - n0) * exp(-kfrac * time)
+  nt <- pfrac / kfrac - (pfrac / kfrac - n0) * exp(-kfrac * time)
   # Equation 5 (and denominator in Eq. 11):
-  mt <- P/k - (P/k - m0) * exp(-k * time)
+  mt <- P / k - (P / k - m0) * exp(-k * time)
   ap <- nt / mt * 100
 
   data.frame(mt = mt, nt = nt, AP_pred =  ap)

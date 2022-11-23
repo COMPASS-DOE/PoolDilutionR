@@ -22,5 +22,5 @@ cost_function <- function(params, time, m, n, Nm, Nd) {
                         P = params["P"],
                         k = params["k"])
   #vFH eq 14
-  sum((abs(m - pred$mt)/sd(m))*Nm + (abs(n - pred$nt)/sd(n))*Nd)
+  sum((abs(m - pred$mt) / sd(m)) * Nm + (abs(n - pred$nt) / sd(n)) * Nd)
 }

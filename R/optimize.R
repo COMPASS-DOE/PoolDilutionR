@@ -7,8 +7,9 @@
 #' @param Nm Normalization factor for pool size, see Eq. 12
 #' @param Nd Normalization factor for isotopic signature, see Eq. 13
 #' @param params Parameters TODO
-#' @param cost_fn Cost function to use, passed to \code{\link{optim}}
-#' @param prediction_fn Prediction function that the cost function will use
+#' @param cost_fn Cost function to use; the default is \code{\link{cost_function}}
+#' @param prediction_fn Prediction function that the cost function will use;
+#' the default is \code{\link{ap_prediction}}
 #' @param control Optional list of control parameters; see \code{\link{optim}}
 #'
 #' @return The output of \code{\link{optim}}.
