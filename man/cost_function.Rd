@@ -4,7 +4,7 @@
 \alias{cost_function}
 \title{Cost Function}
 \usage{
-cost_function(params, time, m, n, Nm, Nd)
+cost_function(params, time, m, n, Nm, Nd, log_progress = NULL)
 }
 \arguments{
 \item{params}{named vector holding optimizer-assigned values for P and k}
@@ -18,6 +18,8 @@ cost_function(params, time, m, n, Nm, Nd)
 \item{Nm}{normalization factor for pool size, see Eq. 12}
 
 \item{Nd}{normalization factor for isotopic signature, see Eq. 13}
+
+\item{log_progress}{An optional logging function}
 }
 \value{
 Returns the sum of squares between predicted and observed m and AP

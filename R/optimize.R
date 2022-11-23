@@ -46,6 +46,15 @@ optimize_pk <- function(time, m, n, Nm, Nd,
     params[["control"]] <- list()
   }
 
+  # Create a closure for logging progress
+  log_msgs <- list()
+  step <- 1
+  plog <- function(x) {
+    log_msgs[[step]] <<- as.data.frame(x)
+    step <<- step + 1
+  }
+
+  # Call optim()
   out <- optim(par = c("P" = params[["P0"]], "k"= params[["k0"]]),
         fn = cost_fn,
         method = params[["method"]],
@@ -58,9 +67,11 @@ optimize_pk <- function(time, m, n, Nm, Nd,
         m = m,
         n = n,
         Nm = Nm,
-        Nd = Nd)
+        Nd = Nd,
+        log_progress = plog)
 
   out$initial_par <- c("P0" = params[["P0"]], "k0" = params[["k0"]])
+  out$progress <- do.call(rbind, c(log_msgs, make.row.names = FALSE))
   out
 }
 
