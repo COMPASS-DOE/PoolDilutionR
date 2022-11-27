@@ -12,8 +12,7 @@ optimize_pk(
   Nd,
   params,
   cost_fn = cost_function,
-  prediction_fn = ap_prediction,
-  control = list()
+  prediction_fn = ap_prediction
 )
 }
 \arguments{
@@ -29,9 +28,10 @@ optimize_pk(
 
 \item{params}{Parameters TODO}
 
-\item{cost_fn}{Cost function to use, passed to \code{\link{optim}}}
+\item{cost_fn}{Cost function to use; the default is \code{\link{cost_function}}}
 
-\item{prediction_fn}{Prediction function that the cost function will use}
+\item{prediction_fn}{Prediction function that the cost function will use;
+the default is \code{\link{ap_prediction}}}
 
 \item{control}{Optional list of control parameters; see \code{\link{optim}}}
 }
