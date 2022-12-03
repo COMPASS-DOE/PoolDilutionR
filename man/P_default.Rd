@@ -2,19 +2,19 @@
 % Please edit documentation in R/misc.R
 \name{P_default}
 \alias{P_default}
-\title{Retrieve default P fractionation value for a gas}
+\title{Retrieve default P fractionation value for a pool}
 \usage{
-P_default(gas)
+P_default(pool)
 }
 \arguments{
-\item{gas}{Name of gas, character}
+\item{pool}{Name of pool, character}
 }
 \value{
-The default entry for \code{gas} listed
+The default entry for \code{pool} listed
 in \code{\link{pdr_fractionation}}.
 }
 \description{
-Retrieve default P fractionation value for a gas
+Retrieve default P fractionation value for a pool
 }
 \examples{
 P_default("CH4")

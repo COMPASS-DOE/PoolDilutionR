@@ -10,9 +10,9 @@ ap_prediction(
   n0,
   P,
   k,
-  gas = "CH4",
-  frac_P = P_default(gas),
-  frac_k = k_default(gas)
+  pool = "CH4",
+  frac_P = P_default(pool),
+  frac_k = k_default(pool)
 )
 }
 \arguments{
@@ -26,7 +26,7 @@ ap_prediction(
 
 \item{k}{first-order rate constant for consumption, 1/unit time}
 
-\item{gas}{Name of gas; see \code{\link{pdr_fractionation}}}
+\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 

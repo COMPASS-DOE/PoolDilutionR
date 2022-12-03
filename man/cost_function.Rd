@@ -11,9 +11,9 @@ cost_function(
   n,
   Nm,
   Nd,
-  gas = "CH4",
-  frac_P = P_default(gas),
-  frac_k = k_default(gas),
+  pool = "CH4",
+  frac_P = P_default(pool),
+  frac_k = k_default(pool),
   log_progress = NULL
 )
 }
@@ -30,7 +30,7 @@ cost_function(
 
 \item{Nd}{normalization factor for isotopic signature, see Eq. 13}
 
-\item{gas}{Name of gas; see \code{\link{pdr_fractionation}}}
+\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 

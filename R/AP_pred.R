@@ -6,7 +6,7 @@
 #' @param n0 amount of heavy isotope at time zero, as a volume
 #' @param P production rate, unit gas/unit time
 #' @param k first-order rate constant for consumption, 1/unit time
-#' @param gas Name of gas; see \code{\link{pdr_fractionation}}
+#' @param pool Name of pool; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #'
@@ -17,9 +17,9 @@
 #' @author K.A. Morris & B. B-L
 #' @examples
 ap_prediction <- function(time, m0, n0, P, k,
-                          gas = "CH4",
-                          frac_P = P_default(gas),
-                          frac_k = k_default(gas)) {
+                          pool = "CH4",
+                          frac_P = P_default(pool),
+                          frac_k = k_default(pool)) {
   if(! is.numeric(time)) stop("Time must be numeric.")
   if(time[1] != 0.0) stop("First time value must be zero.")
   stopifnot(all(diff(time) > 0))

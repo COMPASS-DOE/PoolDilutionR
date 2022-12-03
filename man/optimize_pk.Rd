@@ -11,9 +11,9 @@ optimize_pk(
   Nm,
   Nd,
   params,
-  gas = "CH4",
-  frac_P = P_default(gas),
-  frac_k = k_default(gas),
+  pool = "CH4",
+  frac_P = P_default(pool),
+  frac_k = k_default(pool),
   cost_fn = cost_function,
   prediction_fn = ap_prediction
 )
@@ -31,7 +31,7 @@ optimize_pk(
 
 \item{params}{Parameters TODO}
 
-\item{gas}{Name of gas; see \code{\link{pdr_fractionation}}}
+\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 

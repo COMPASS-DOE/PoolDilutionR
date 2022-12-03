@@ -2,19 +2,19 @@
 % Please edit documentation in R/misc.R
 \name{k_default}
 \alias{k_default}
-\title{Retrieve default k fractionation value for a gas}
+\title{Retrieve default k fractionation value for a pool}
 \usage{
-k_default(gas)
+k_default(pool)
 }
 \arguments{
-\item{gas}{Name of gas, character}
+\item{pool}{Name of pool, character}
 }
 \value{
-The default entry for \code{gas} listed
+The default entry for \code{pool} listed
 in \code{\link{pdr_fractionation}}.
 }
 \description{
-Retrieve default k fractionation value for a gas
+Retrieve default k fractionation value for a pool
 }
 \examples{
 k_default("CH4")
