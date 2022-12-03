@@ -72,8 +72,10 @@ optimize_pk <- function(time, m, n, Nm, Nd,
         time = time,
         m = m,
         n = n,
-        Nm = Nm, Nd = Nd,
-        frac_P = frac_P, frac_k = frac_k,
+        Nm = Nm,
+        Nd = Nd,
+        frac_P = frac_P,
+        frac_k = frac_k,
         log_progress = plog)
 
   out$initial_par <- c("P0" = params[["P0"]], "k0" = params[["k0"]])

@@ -4,7 +4,18 @@
 \alias{cost_function}
 \title{Cost Function}
 \usage{
-cost_function(params, time, m, n, Nm, Nd, frac_P, frac_k, log_progress = NULL)
+cost_function(
+  params,
+  time,
+  m,
+  n,
+  Nm,
+  Nd,
+  gas = "CH4",
+  frac_P = P_default(gas),
+  frac_k = k_default(gas),
+  log_progress = NULL
+)
 }
 \arguments{
 \item{params}{named vector holding optimizer-assigned values for P and k}
@@ -18,6 +29,8 @@ cost_function(params, time, m, n, Nm, Nd, frac_P, frac_k, log_progress = NULL)
 \item{Nm}{normalization factor for pool size, see Eq. 12}
 
 \item{Nd}{normalization factor for isotopic signature, see Eq. 13}
+
+\item{gas}{Name of gas; see \code{\link{pdr_fractionation}}}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 

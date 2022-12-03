@@ -7,6 +7,7 @@
 #' @param n observed heavy isotope (as a volume), same length as time
 #' @param Nm normalization factor for pool size, see Eq. 12
 #' @param Nd normalization factor for isotopic signature, see Eq. 13
+#' @param gas Name of gas; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #' @param log_progress An optional logging function
@@ -18,7 +19,9 @@
 #' @author K.A. Morris & B. B-L
 #' @examples
 cost_function <- function(params, time, m, n, Nm, Nd,
-                          frac_P, frac_k,
+                          gas = "CH4",
+                          frac_P = P_default(gas),
+                          frac_k = k_default(gas),
                           log_progress = NULL) {
   #message(params["P"], ",", params["k"])
   pred <- ap_prediction(time = time,
