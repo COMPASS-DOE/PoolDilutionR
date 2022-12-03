@@ -13,7 +13,7 @@ P_default <- function(gas) {
   if(!gas %in% pdr_fractionation$Gas) {
     stop("This gas is not listed in pdr_fractionation")
   }
-  pdr_fractionation[pdr_fractionation$Gas == gas,
+  pdr_fractionation[pdr_fractionation$Gas == gas &
                     pdr_fractionation$Default,
                     "frac_P"]
 }
@@ -33,7 +33,7 @@ k_default <- function(gas) {
   if(!gas %in% pdr_fractionation$Gas) {
     stop("This gas is not listed in pdr_fractionation")
   }
-  pdr_fractionation[pdr_fractionation$Gas == gas,
+  pdr_fractionation[pdr_fractionation$Gas == gas &
                     pdr_fractionation$Default,
                     "frac_k"]
 }

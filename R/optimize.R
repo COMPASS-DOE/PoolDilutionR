@@ -33,7 +33,7 @@ optimize_pk <- function(time, m, n, Nm, Nd,
   }
   # If k0 not given, guess
   if(is.null(params[["k0"]])) {
-    params[["k0"]] <- estimate_k0(time, n, FRAC_K)
+    params[["k0"]] <- estimate_k0(time, n, frac_k)
   }
   # If method not given, set default
   if(is.null(params[["method"]])) {
