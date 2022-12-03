@@ -6,6 +6,8 @@
 #' @param n0 amount of heavy isotope at time zero, as a volume
 #' @param P production rate, unit gas/unit time
 #' @param k first-order rate constant for consumption, 1/unit time
+#' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
+#' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #'
 #' @return Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step
 #' @export
@@ -13,14 +15,15 @@
 #' @note All combined, this is Eq. 11 from vFH2002 with a few modifications…
 #' @author K.A. Morris & B. B-L
 #' @examples
-ap_prediction <- function(time, m0, n0, P, k) {
+ap_prediction <- function(time, m0, n0, P, k, frac_P, frac_k) {
   if(! is.numeric(time)) stop("Time must be numeric.")
   if(time[1] != 0.0) stop("First time value must be zero.")
   stopifnot(all(diff(time) > 0))
-  kfrac <- k * FRAC_K
-  pfrac <- P * FRAC_P
+
+  kfrac <- k * frac_k
+  pfrac <- P * frac_P
   nt <- pfrac / kfrac - (pfrac / kfrac - n0) * exp(-kfrac * time)
-  # Equation 5 (and denominator in Eq. 11):
+  # Equation 5 (and denominator in Eq. 11 of von Fischer 2002):
   mt <- P / k - (P / k - m0) * exp(-k * time)
   ap <- nt / mt * 100
 

@@ -7,6 +7,9 @@
 #' @param Nm Normalization factor for pool size, see Eq. 12
 #' @param Nd Normalization factor for isotopic signature, see Eq. 13
 #' @param params Parameters TODO
+#' @param gas Name of gas; see \code{\link{pdr_fractionation}}
+#' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
+#' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #' @param cost_fn Cost function to use; the default is \code{\link{cost_function}}
 #' @param prediction_fn Prediction function that the cost function will use;
 #' the default is \code{\link{ap_prediction}}
@@ -18,6 +21,9 @@
 #' @examples
 optimize_pk <- function(time, m, n, Nm, Nd,
                         params,
+                        gas = "CH4",
+                        frac_P = P_default(gas),
+                        frac_k = k_default(gas),
                         cost_fn = cost_function,
                         prediction_fn = ap_prediction) {
 
@@ -66,8 +72,8 @@ optimize_pk <- function(time, m, n, Nm, Nd,
         time = time,
         m = m,
         n = n,
-        Nm = Nm,
-        Nd = Nd,
+        Nm = Nm, Nd = Nd,
+        frac_P = frac_P, frac_k = frac_k,
         log_progress = plog)
 
   out$initial_par <- c("P0" = params[["P0"]], "k0" = params[["k0"]])

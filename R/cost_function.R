@@ -7,6 +7,8 @@
 #' @param n observed heavy isotope (as a volume), same length as time
 #' @param Nm normalization factor for pool size, see Eq. 12
 #' @param Nd normalization factor for isotopic signature, see Eq. 13
+#' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
+#' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #' @param log_progress An optional logging function
 #'
 #' @return Returns the sum of squares between predicted and observed m and AP
@@ -15,7 +17,9 @@
 #' @note This is Eq. 14 from vFH2002 with a few modifications…
 #' @author K.A. Morris & B. B-L
 #' @examples
-cost_function <- function(params, time, m, n, Nm, Nd, log_progress = NULL) {
+cost_function <- function(params, time, m, n, Nm, Nd,
+                          frac_P, frac_k,
+                          log_progress = NULL) {
   #message(params["P"], ",", params["k"])
   pred <- ap_prediction(time = time,
                         m0 = m[1],

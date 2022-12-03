@@ -11,6 +11,9 @@ optimize_pk(
   Nm,
   Nd,
   params,
+  gas = "CH4",
+  frac_P = P_default(gas),
+  frac_k = k_default(gas),
   cost_fn = cost_function,
   prediction_fn = ap_prediction
 )
@@ -27,6 +30,12 @@ optimize_pk(
 \item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
 
 \item{params}{Parameters TODO}
+
+\item{gas}{Name of gas; see \code{\link{pdr_fractionation}}}
+
+\item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
+
+\item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
 
 \item{cost_fn}{Cost function to use; the default is \code{\link{cost_function}}}
 

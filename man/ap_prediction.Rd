@@ -4,7 +4,7 @@
 \alias{ap_prediction}
 \title{Atom Percent Prediction}
 \usage{
-ap_prediction(time, m0, n0, P, k)
+ap_prediction(time, m0, n0, P, k, frac_P, frac_k)
 }
 \arguments{
 \item{time}{vector of time values, numeric (e.g. days); first should be zero}
@@ -16,6 +16,10 @@ ap_prediction(time, m0, n0, P, k)
 \item{P}{production rate, unit gas/unit time}
 
 \item{k}{first-order rate constant for consumption, 1/unit time}
+
+\item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
+
+\item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
 }
 \value{
 Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step
