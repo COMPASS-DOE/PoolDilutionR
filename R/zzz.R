@@ -1,6 +1,4 @@
 
-.onAttach <- function(...) {
-  if(interactive() && stats::runif(1) < 0.2) {
-    packageStartupMessage("Citation: Morris et al. (2023) xxxxx")
-  }
+.onAttach <- function(libname, pkgname) {
+    packageStartupMessage("This is an alpha version of PoolDilutionR; some functions may not work optimally.")
 }
