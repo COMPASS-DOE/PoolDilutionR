@@ -13,9 +13,10 @@
 #' @return Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step
 #' @export
 #'
-#' @note All combined, this is Eq. 11 from vFH2002 with a few modifications…
+#' @note All combined, this is Eq. 11 from vFH2002 with a few modifications.
 #' @author K.A. Morris & B. B-L
 #' @examples
+#' ap_prediction(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)
 ap_prediction <- function(time, m0, n0, P, k,
                           pool = "CH4",
                           frac_P = P_default(pool),

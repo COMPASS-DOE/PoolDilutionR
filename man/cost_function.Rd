@@ -47,6 +47,13 @@ Cost Function
 \note{
 This is Eq. 14 from vFH2002 with a few modifications…
 }
+\examples{
+m <- c(10, 8, 6, 5, 4, 3)
+n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
+Nm = m / 10
+Nd = n / 10
+cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, Nm, Nd)
+}
 \author{
 K.A. Morris & B. B-L
 }

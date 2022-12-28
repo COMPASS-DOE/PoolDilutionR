@@ -18,6 +18,11 @@
 #' @note This is Eq. 14 from vFH2002 with a few modifications…
 #' @author K.A. Morris & B. B-L
 #' @examples
+#' m <- c(10, 8, 6, 5, 4, 3)
+#' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
+#' Nm = m / 10
+#' Nd = n / 10
+#' cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, Nm, Nd)
 cost_function <- function(params, time, m, n, Nm, Nd,
                           pool = "CH4",
                           frac_P = P_default(pool),
@@ -27,14 +32,14 @@ cost_function <- function(params, time, m, n, Nm, Nd,
   pred <- ap_prediction(time = time,
                         m0 = m[1],
                         n0 = n[1],
-                        P = params["P"],
-                        k = params["k"])
+                        P = params[["P"]],
+                        k = params[["k"]])
 
   #vFH eq 14
   cost <- sum((abs(m - pred$mt) / sd(m)) * Nm + (abs(n - pred$nt) / sd(n)) * Nd)
   # Log progress and return to optimizer
   if(!is.null(log_progress)) {
-    log_progress(data.frame(P = params["P"], k = params["k"], cost = cost))
+    log_progress(data.frame(P = params[["P"]], k = params[["k"]], cost = cost))
   }
   cost
 }
