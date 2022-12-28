@@ -33,7 +33,9 @@ cost_function <- function(params, time, m, n, Nm, Nd,
                         m0 = m[1],
                         n0 = n[1],
                         P = params[["P"]],
-                        k = params[["k"]])
+                        k = params[["k"]],
+                        frac_P = frac_P,
+                        frac_k = frac_k)
 
   #vFH eq 14
   cost <- sum((abs(m - pred$mt) / sd(m)) * Nm + (abs(n - pred$nt) / sd(n)) * Nd)
