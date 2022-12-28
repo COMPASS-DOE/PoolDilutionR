@@ -41,8 +41,6 @@ optimize_pk(
 
 \item{prediction_fn}{Prediction function that the cost function will use;
 the default is \code{\link{ap_prediction}}}
-
-\item{control}{Optional list of control parameters; see \code{\link{optim}}}
 }
 \value{
 The output of \code{\link{optim}}.

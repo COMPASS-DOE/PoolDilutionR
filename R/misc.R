@@ -1,3 +1,4 @@
+utils::globalVariables("pdr_fractionation")
 
 #' Retrieve default P fractionation value for a pool
 #'

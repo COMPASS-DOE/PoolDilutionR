@@ -13,8 +13,8 @@
 #' @param cost_fn Cost function to use; the default is \code{\link{cost_function}}
 #' @param prediction_fn Prediction function that the cost function will use;
 #' the default is \code{\link{ap_prediction}}
-#' @param control Optional list of control parameters; see \code{\link{optim}}
 #'
+#' @importFrom stats optim
 #' @return The output of \code{\link{optim}}.
 #' @export
 #'
@@ -90,6 +90,7 @@ optimize_pk <- function(time, m, n, Nm, Nd,
 #' @param n Observed heavy isotope (as a volume), same length as time
 #' @param frac_k Fractionation: 13C consumption as a fraction of 12C consumption
 #'
+#' @importFrom stats lm
 #' @return Initial estimate of k0 (consumption rate constant)
 #' @export
 #'

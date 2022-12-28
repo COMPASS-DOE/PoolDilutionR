@@ -12,6 +12,7 @@
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #' @param log_progress An optional logging function
 #'
+#' @importFrom stats sd
 #' @return Returns the sum of squares between predicted and observed m and AP
 #' @export
 #'
