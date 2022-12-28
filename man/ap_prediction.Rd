@@ -33,7 +33,7 @@ ap_prediction(
 \item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
 }
 \value{
-Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step
+Returns a data frame with \code{mt}, \code{nt}, and \code{AP_pred} (atom percent) for each time step
 }
 \description{
 Atom Percent Prediction

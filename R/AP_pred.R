@@ -10,7 +10,7 @@
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #'
-#' @return Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step
+#' @return Returns a data frame with \code{mt}, \code{nt}, and \code{AP_pred} (atom percent) for each time step
 #' @export
 #'
 #' @note All combined, this is Eq. 11 from vFH2002 with a few modifications.
@@ -22,8 +22,8 @@ ap_prediction <- function(time, m0, n0, P, k,
                           frac_P = P_default(pool),
                           frac_k = k_default(pool)) {
   if(! is.numeric(time)) stop("Time must be numeric.")
+  if(!all(diff(time) > 0)) stop("Time values must increase.")
   if(time[1] != 0.0) stop("First time value must be zero.")
-  stopifnot(all(diff(time) > 0))
 
   kfrac <- k * frac_k
   pfrac <- P * frac_P
