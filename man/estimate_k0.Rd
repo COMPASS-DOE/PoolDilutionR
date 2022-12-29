@@ -7,7 +7,7 @@
 estimate_k0(time, n, frac_k)
 }
 \arguments{
-\item{time}{Time vector of time values, numeric (e.g. days); first should be zero}
+\item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
 \item{n}{Observed heavy isotope (as a volume), same length as time}
 

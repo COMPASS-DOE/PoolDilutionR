@@ -16,7 +16,7 @@ ap_prediction(
 )
 }
 \arguments{
-\item{time}{vector of time values, numeric (e.g. days); first should be zero}
+\item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
 \item{m0}{pool size at time zero, as a volume}
 
@@ -45,5 +45,5 @@ All combined, this is Eq. 11 from vFH2002 with a few modifications.
 ap_prediction(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)
 }
 \author{
-K.A. Morris & B. B-L
+K.A. Morris & B. Bond-Lamberty
 }

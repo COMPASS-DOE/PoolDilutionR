@@ -19,7 +19,7 @@ optimize_pk(
 )
 }
 \arguments{
-\item{time}{Time vector of time values, numeric (e.g. days); first should be zero}
+\item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
 \item{m}{Observed pool size (as a volume), same length as time}
 
@@ -47,4 +47,11 @@ The output of \code{\link{optim}}.
 }
 \description{
 Optimize P (production) and k (consumption) for a pool dilution experiment
+}
+\examples{
+m <- c(10, 8, 6, 5, 4, 3)
+n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
+Nm = m / 10
+Nd = n / 10
+optimize_pk(time = 0:5, m, n, Nm, Nd, params = list(P0 = 0.5))
 }

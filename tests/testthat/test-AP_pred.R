@@ -2,7 +2,7 @@ test_that("ap_prediction works", {
   # Bad inputs
   expect_error(ap_prediction(1), regexp = "must be zero")
   expect_error(ap_prediction("1"), regexp = "must be numeric")
-  expect_error(ap_prediction(c(0,2,1)), regexp = "must increase")
+  expect_error(ap_prediction(c(0, 2, 1)), regexp = "must increase")
 
   # Basic behavior, P < C
   times <- 0:5

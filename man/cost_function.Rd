@@ -18,17 +18,17 @@ cost_function(
 )
 }
 \arguments{
-\item{params}{named vector holding optimizer-assigned values for P and k}
+\item{params}{Named vector holding optimizer-assigned values for P and k}
 
-\item{time}{vector of time values, numeric (e.g. days); first should be zero}
+\item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
-\item{m}{observed pool size (as a volume), same length as time}
+\item{m}{Observed pool size (as a volume), same length as time}
 
-\item{n}{observed heavy isotope (as a volume), same length as time}
+\item{n}{Observed heavy isotope (as a volume), same length as time}
 
-\item{Nm}{normalization factor for pool size, see Eq. 12}
+\item{Nm}{Normalization factor for pool size, see Eq. 12}
 
-\item{Nd}{normalization factor for isotopic signature, see Eq. 13}
+\item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
 
 \item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
 
@@ -55,5 +55,5 @@ Nd = n / 10
 cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, Nm, Nd)
 }
 \author{
-K.A. Morris & B. B-L
+K.A. Morris & B. Bond-Lamberty
 }
