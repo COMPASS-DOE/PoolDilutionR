@@ -4,10 +4,19 @@
 \alias{ap_prediction}
 \title{Atom Percent Prediction}
 \usage{
-ap_prediction(time, m0, n0, P, k)
+ap_prediction(
+  time,
+  m0,
+  n0,
+  P,
+  k,
+  pool = "CH4",
+  frac_P = P_default(pool),
+  frac_k = k_default(pool)
+)
 }
 \arguments{
-\item{time}{vector of time values, numeric (e.g. days); first should be zero}
+\item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
 \item{m0}{pool size at time zero, as a volume}
 
@@ -16,16 +25,25 @@ ap_prediction(time, m0, n0, P, k)
 \item{P}{production rate, unit gas/unit time}
 
 \item{k}{first-order rate constant for consumption, 1/unit time}
+
+\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
+
+\item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
+
+\item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
 }
 \value{
-Returns a data frame with mt, nt, and AP (atom percent) predictions for each time step
+Returns a data frame with \code{mt}, \code{nt}, and \code{AP_pred} (atom percent) for each time step
 }
 \description{
 Atom Percent Prediction
 }
 \note{
-All combined, this is Eq. 11 from vFH2002 with a few modifications…
+All combined, this is Eq. 11 from vFH2002 with a few modifications.
+}
+\examples{
+ap_prediction(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)
 }
 \author{
-K.A. Morris & B. B-L
+K.A. Morris & B. Bond-Lamberty
 }

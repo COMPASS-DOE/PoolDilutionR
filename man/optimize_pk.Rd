@@ -11,12 +11,15 @@ optimize_pk(
   Nm,
   Nd,
   params,
+  pool = "CH4",
+  frac_P = P_default(pool),
+  frac_k = k_default(pool),
   cost_fn = cost_function,
   prediction_fn = ap_prediction
 )
 }
 \arguments{
-\item{time}{Time vector of time values, numeric (e.g. days); first should be zero}
+\item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
 \item{m}{Observed pool size (as a volume), same length as time}
 
@@ -28,16 +31,27 @@ optimize_pk(
 
 \item{params}{Parameters TODO}
 
+\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
+
+\item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
+
+\item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
+
 \item{cost_fn}{Cost function to use; the default is \code{\link{cost_function}}}
 
 \item{prediction_fn}{Prediction function that the cost function will use;
 the default is \code{\link{ap_prediction}}}
-
-\item{control}{Optional list of control parameters; see \code{\link{optim}}}
 }
 \value{
 The output of \code{\link{optim}}.
 }
 \description{
 Optimize P (production) and k (consumption) for a pool dilution experiment
+}
+\examples{
+m <- c(10, 8, 6, 5, 4, 3)
+n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
+Nm = m / 10
+Nd = n / 10
+optimize_pk(time = 0:5, m, n, Nm, Nd, params = list(P0 = 0.5))
 }
