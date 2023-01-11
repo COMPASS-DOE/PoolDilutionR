@@ -23,17 +23,20 @@
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 #' Nm = m / 10
 #' Nd = n / 10
-#' optimize_pk(time = 0:5, m, n, Nm, Nd, params = list(P0 = 0.5))
-optimize_pk <- function(time, m, n, Nm, Nd,
-                        params,
-                        pool = "CH4",
-                        frac_P = P_default(pool),
-                        frac_k = k_default(pool),
-                        cost_fn = cost_function,
-                        prediction_fn = ap_prediction) {
+#' pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5)
+pdr_optimize <- function(time, m, n, Nm, Nd,
+                         P,
+                         k,
+                         params_to_optimize = c("P", "k"),
+                         pool = "CH4",
+                         frac_P = P_default(pool),
+                         frac_k = k_default(pool),
+                         other_params = list(),
+                         cost_fn = cost_function,
+                         prediction_fn = ap_prediction) {
 
   # Set defaults if not given by user
-  params <- set_default_params(params, time, n, frac_k)
+  other_params <- set_default_params(other_params)
 
   # Create a closure for logging progress
   log_msgs <- list()
@@ -43,25 +46,38 @@ optimize_pk <- function(time, m, n, Nm, Nd,
     step <<- step + 1
   }
 
+  # Estimate k starting value if not given
+  if(missing(k)) {
+    k <- estimate_k0(time, n, frac_k)
+  }
+
+  # Create the optim's 'par' vector that controls which parameters to optimize
+  params <- rep(NA_real_, length(params_to_optimize))
+  all_params <- c("P" = P, "k" = k, "frac_P" = frac_P, "frac_k" = frac_k)
+  if(any(!params_to_optimize %in% names(all_params))) {
+    stop("`params_to_optimize` must be P, k, frac_P, and/or frac_k")
+  }
+  params <- all_params[params_to_optimize]
+
   # Call optim()
-  out <- optim(par = c("P" = params[["P0"]], "k"= params[["k0"]]),
-        fn = cost_fn,
-        method = params[["method"]],
-        lower = params[["lower"]],
-        upper = params[["upper"]],
-        control = params[["control"]],
+  out <- optim(par = params,
+               fn = cost_fn,
+               method = other_params[["method"]],
+               lower = other_params[["lower"]],
+               upper = other_params[["upper"]],
+               control = other_params[["control"]],
 
-        # "..." that the optimizer will pass to cost_fn:
-        time = time,
-        m = m,
-        n = n,
-        Nm = Nm,
-        Nd = Nd,
-        frac_P = frac_P,
-        frac_k = frac_k,
-        log_progress = plog)
+               # "..." that the optimizer will pass to cost_fn:
+               time = time,
+               m = m,
+               n = n,
+               Nm = Nm,
+               Nd = Nd,
+               frac_P = frac_P,
+               frac_k = frac_k,
+               log_progress = plog)
 
-  out$initial_par <- c("P0" = params[["P0"]], "k0" = params[["k0"]])
+  out$initial_par <- params
   out$progress <- do.call(rbind, c(log_msgs, make.row.names = FALSE))
   out
 }
@@ -69,39 +85,31 @@ optimize_pk <- function(time, m, n, Nm, Nd,
 
 #' Set default parameters for optimization
 #'
-#' @param params A named list of parameters
+#' @param other_params A named list of parameters
 #' @param time Vector of numeric time values (e.g. days); first should be zero
 #' @param n Observed heavy isotope (as a volume), same length as time
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #'
 #' @return The \code{params} list with entries filled in as needed.
-set_default_params <- function(params, time, n, frac_k) {
+set_default_params <- function(other_params) {
 
-  # If P0 not given, guess
-  if(is.null(params[["P0"]])) {
-    stop("Not implemented!")
-  }
-  # If k0 not given, guess
-  if(is.null(params[["k0"]])) {
-    params[["k0"]] <- estimate_k0(time, n, frac_k)
-  }
   # If method not given, set default
-  if(is.null(params[["method"]])) {
-    params[["method"]] <- "L-BFGS-B"
+  if(is.null(other_params[["method"]])) {
+    other_params[["method"]] <- "L-BFGS-B"
   }
   # If bounds not given, provide some so that the optimizer
   # isn't allowed to produce <0 values for P, nor <=0 for k
-  if(is.null(params[["lower"]])) {
-    params[["lower"]] <- c("P" = 0.0, "k"= 0.0001)
+  if(is.null(other_params[["lower"]])) {
+    other_params[["lower"]] <- c("P" = 0.0, "k"= 0.0001, "frac_P" = 0, "frac_k" = 0)
   }
-  if(is.null(params[["upper"]])) {
-    params[["upper"]] <- c("P" = Inf, "k"= Inf)
+  if(is.null(other_params[["upper"]])) {
+    other_params[["upper"]] <- c("P" = Inf, "k"= Inf, "frac_P" = 1, "frac_k" = 1)
   }
   # If control not given, use an empty list
-  if(is.null(params[["control"]])) {
-    params[["control"]] <- list()
+  if(is.null(other_params[["control"]])) {
+    other_params[["control"]] <- list()
   }
-  params
+  other_params
 }
 
 
@@ -132,6 +140,6 @@ estimate_k0 <- function(time, n, frac_k) {
   # "...multiplied by 1/a to correct for fractionation against the
   # labeled methane." (BBL: this should be "1/-a"; see equation 8)
   k0 = n_slope / -frac_k
-  #message("Estimated k0 = ", k0, " from n_slope = ", n_slope)
+  message("Estimated k0 = ", round(k0, 3), " from n_slope = ", round(n_slope, 3))
   k0
 }

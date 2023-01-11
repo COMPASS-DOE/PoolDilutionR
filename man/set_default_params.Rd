@@ -4,10 +4,10 @@
 \alias{set_default_params}
 \title{Set default parameters for optimization}
 \usage{
-set_default_params(params, time, n, frac_k)
+set_default_params(other_params)
 }
 \arguments{
-\item{params}{A named list of parameters}
+\item{other_params}{A named list of parameters}
 
 \item{time}{Vector of numeric time values (e.g. days); first should be zero}
 

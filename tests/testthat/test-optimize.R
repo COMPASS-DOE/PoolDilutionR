@@ -1,25 +1,15 @@
 test_that("set_default_params works", {
 
-  # Errors is P0 not given
-  expect_error(set_default_params(params = list()), regexp = "Not implemented")
-
   p <- list(P0 = 1)
   times <- 0:5
   # convenience function
   sdp <- function(p) {
-    set_default_params(p, times, n = runif(length(times)), frac_k = 0.1)
+    set_default_params(p)
   }
 
   # Basic behavior: returns a list
   x <- sdp(p)
   expect_type(x, "list")
-
-  # k0 not supplied
-  expect_type(x$k0, "double")
-  # k0 supplied
-  p$k0 <- 0.1
-  x <- sdp(p)
-  expect_identical(x$k0, 0.1)
 
   # method not supplied
   expect_type(x$method, "character")
@@ -30,7 +20,8 @@ test_that("set_default_params works", {
 
   # lower not supplied
   expect_type(x$lower, "double")
-  expect_identical(sort(names(x$lower)), sort(c("P", "k")))
+  exp_names <- sort(c("P", "k", "frac_P", "frac_k"))
+  expect_identical(sort(names(x$lower)), exp_names)
 
   # lower supplied
   p$lower <- "test"
@@ -39,7 +30,7 @@ test_that("set_default_params works", {
 
   # upper not supplied
   expect_type(x$upper, "double")
-  expect_identical(sort(names(x$upper)), sort(c("P", "k")))
+  expect_identical(sort(names(x$upper)), exp_names)
 
   # upper supplied
   p$upper <- "test"
