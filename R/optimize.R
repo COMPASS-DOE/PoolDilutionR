@@ -6,10 +6,14 @@
 #' @param n Observed heavy isotope (as a volume), same length as time
 #' @param Nm Normalization factor for pool size, see Eq. 12
 #' @param Nd Normalization factor for isotopic signature, see Eq. 13
-#' @param params Parameters TODO
+#' @param P pee
+#' @param k kay
+#' @param params_to_optimize Named vector of parameters ("P", "k", "frac_P",
+#' and/or "frac_k") to optimize against observations
 #' @param pool Name of pool; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
+#' @param other_params Other parameters pass on to \code{\link{optim}}
 #' @param cost_fn Cost function to use; the default is \code{\link{cost_function}}
 #' @param prediction_fn Prediction function that the cost function will use;
 #' the default is \code{\link{ap_prediction}}
@@ -86,9 +90,6 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
 #' Set default parameters for optimization
 #'
 #' @param other_params A named list of parameters
-#' @param time Vector of numeric time values (e.g. days); first should be zero
-#' @param n Observed heavy isotope (as a volume), same length as time
-#' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #'
 #' @return The \code{params} list with entries filled in as needed.
 set_default_params <- function(other_params) {

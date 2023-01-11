@@ -8,12 +8,6 @@ set_default_params(other_params)
 }
 \arguments{
 \item{other_params}{A named list of parameters}
-
-\item{time}{Vector of numeric time values (e.g. days); first should be zero}
-
-\item{n}{Observed heavy isotope (as a volume), same length as time}
-
-\item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
 }
 \value{
 The \code{params} list with entries filled in as needed.

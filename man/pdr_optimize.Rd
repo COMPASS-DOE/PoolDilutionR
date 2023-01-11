@@ -32,18 +32,25 @@ pdr_optimize(
 
 \item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
 
+\item{P}{pee}
+
+\item{k}{kay}
+
+\item{params_to_optimize}{Named vector of parameters ("P", "k", "frac_P",
+and/or "frac_k") to optimize against observations}
+
 \item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 
 \item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
 
+\item{other_params}{Other parameters pass on to \code{\link{optim}}}
+
 \item{cost_fn}{Cost function to use; the default is \code{\link{cost_function}}}
 
 \item{prediction_fn}{Prediction function that the cost function will use;
 the default is \code{\link{ap_prediction}}}
-
-\item{params}{Parameters TODO}
 }
 \value{
 The output of \code{\link{optim}}.
