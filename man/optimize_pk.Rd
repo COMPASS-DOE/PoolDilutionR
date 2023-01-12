@@ -8,8 +8,8 @@ optimize_pk(
   time,
   m,
   n,
-  Nm,
-  Nd,
+  m_prec,
+  ap_prec,
   params,
   pool = "CH4",
   frac_P = P_default(pool),
@@ -25,9 +25,9 @@ optimize_pk(
 
 \item{n}{Observed heavy isotope (as a volume), same length as time}
 
-\item{Nm}{Normalization factor for pool size, see Eq. 12}
+\item{m_prec}{Instrument precision for pool size, expressed as a standard deviation}
 
-\item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
+\item{ap_prec}{Instrument precision for atom percent, expressed as a standard deviation}
 
 \item{params}{Parameters TODO}
 
@@ -51,7 +51,5 @@ Optimize P (production) and k (consumption) for a pool dilution experiment
 \examples{
 m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-Nm = m / 10
-Nd = n / 10
-optimize_pk(time = 0:5, m, n, Nm, Nd, params = list(P0 = 0.5))
+optimize_pk(time = 0:5, m, n, m_prec, ap_prec, params = list(P0 = 0.5))
 }

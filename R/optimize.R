@@ -4,8 +4,8 @@
 #' @param time Vector of numeric time values (e.g. days); first should be zero
 #' @param m Observed pool size (as a volume), same length as time
 #' @param n Observed heavy isotope (as a volume), same length as time
-#' @param Nm Normalization factor for pool size, see Eq. 12
-#' @param Nd Normalization factor for isotopic signature, see Eq. 13
+#' @param m_prec Instrument precision for pool size, expressed as a standard deviation
+#' @param ap_prec Instrument precision for atom percent, expressed as a standard deviation
 #' @param params Parameters TODO
 #' @param pool Name of pool; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
@@ -21,10 +21,8 @@
 #' @examples
 #' m <- c(10, 8, 6, 5, 4, 3)
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-#' Nm = m / 10
-#' Nd = n / 10
-#' optimize_pk(time = 0:5, m, n, Nm, Nd, params = list(P0 = 0.5))
-optimize_pk <- function(time, m, n, Nm, Nd,
+#' optimize_pk(time = 0:5, m, n, m_prec = 0.001, ap_prec = 1, params = list(P0 = 0.5))
+optimize_pk <- function(time, m, n, m_prec, ap_prec,
                         params,
                         pool = "CH4",
                         frac_P = P_default(pool),
@@ -55,8 +53,8 @@ optimize_pk <- function(time, m, n, Nm, Nd,
         time = time,
         m = m,
         n = n,
-        Nm = Nm,
-        Nd = Nd,
+        m_prec = m_prec,
+        ap_prec = ap_prec,
         frac_P = frac_P,
         frac_k = frac_k,
         log_progress = plog)

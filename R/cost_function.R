@@ -5,8 +5,8 @@
 #' @param time Vector of numeric time values (e.g. days); first should be zero
 #' @param m Observed pool size (as a volume), same length as time
 #' @param n Observed heavy isotope (as a volume), same length as time
-#' @param Nm Normalization factor for pool size, see Eq. 12
-#' @param Nd Normalization factor for isotopic signature, see Eq. 13
+#' @param m_prec Instrument precision for pool size, expressed as a standard deviation
+#' @param ap_prec Instrument precision for atom percent, expressed as a standard deviation
 #' @param pool Name of pool; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
@@ -21,10 +21,8 @@
 #' @examples
 #' m <- c(10, 8, 6, 5, 4, 3)
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-#' Nm = m / 10
-#' Nd = n / 10
-#' cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, Nm, Nd)
-cost_function <- function(params, time, m, n, Nm, Nd,
+#' cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, m_prec = 0.001, ap_prec = 1)
+cost_function <- function(params, time, m, n, m_prec, ap_prec,
                           pool = "CH4",
                           frac_P = P_default(pool),
                           frac_k = k_default(pool),
@@ -38,8 +36,11 @@ cost_function <- function(params, time, m, n, Nm, Nd,
                         frac_P = frac_P,
                         frac_k = frac_k)
 
+    Pool_weight = sd(m)/m_prec #Normalization factor for pool size, see Eq. 12
+    AP_weight = sd((n/n+m)*100)/ap_prec #Normalization factor for isotopic signature, see Eq. 13
+
   #vFH eq 14
-  cost <- sum((abs(m - pred$mt) / sd(m)) * Nm + (abs(n - pred$nt) / sd(n)) * Nd)
+  cost <- sum((abs(m - pred$mt) / sd(m)) * Pool_weight + (abs(n - pred$nt) / sd(n)) * AP_weight)
   # Log progress and return to optimizer
   if(!is.null(log_progress)) {
     log_progress(data.frame(P = params[["P"]], k = params[["k"]], cost = cost))

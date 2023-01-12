@@ -9,8 +9,8 @@ cost_function(
   time,
   m,
   n,
-  Nm,
-  Nd,
+  m_prec,
+  ap_prec,
   pool = "CH4",
   frac_P = P_default(pool),
   frac_k = k_default(pool),
@@ -26,9 +26,9 @@ cost_function(
 
 \item{n}{Observed heavy isotope (as a volume), same length as time}
 
-\item{Nm}{Normalization factor for pool size, see Eq. 12}
+\item{m_prec}{Instrument precision for pool size, expressed as a standard deviation}
 
-\item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
+\item{ap_prec}{Instrument precision for atom percent, expressed as a standard deviation}
 
 \item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
 
@@ -50,9 +50,7 @@ This is Eq. 14 from vFH2002 with a few modifications…
 \examples{
 m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-Nm = m / 10
-Nd = n / 10
-cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, Nm, Nd)
+cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n)
 }
 \author{
 K.A. Morris & B. Bond-Lamberty
