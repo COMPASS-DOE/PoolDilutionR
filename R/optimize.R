@@ -23,18 +23,19 @@
 #' @export
 #'
 #' @examples
+#' tm <- 0:5
 #' m <- c(10, 8, 6, 5, 4, 3)
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 #' Nm = m / 10
 #' Nd = n / 10
 #' # Optimize values for P (production) and k (consumption)
-#' pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5, k = 0.3)
+#' pdr_optimize(time = tm, m, n, Nm, Nd, P = 0.5, k = 0.3)
 #' # If we don't provide a value for k, it can be estimated from the data
-#' pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5)
+#' pdr_optimize(tm, m, n, Nm, Nd, P = 0.5)
 #' # Hold k and frac_k constant, optimize P and frac_P
-#' pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5, params_to_optimize = c("P", "frac_P"))
+#' pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = c("P", "frac_P"))
 #' # Optimize only k
-#' pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5, params_to_optimize = "k")
+#' pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = "k")
 pdr_optimize <- function(time, m, n, Nm, Nd,
                          P,
                          k,
