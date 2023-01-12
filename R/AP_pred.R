@@ -21,6 +21,7 @@ ap_prediction <- function(time, m0, n0, P, k,
                           pool = "CH4",
                           frac_P = P_default(pool),
                           frac_k = k_default(pool)) {
+
   if(! is.numeric(time)) stop("Time must be numeric.")
   if(!all(diff(time) > 0)) stop("Time values must increase.")
   if(time[1] != 0.0) stop("First time value must be zero.")

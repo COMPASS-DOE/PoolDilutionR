@@ -32,9 +32,9 @@ pdr_optimize(
 
 \item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
 
-\item{P}{pee}
+\item{P}{production rate, unit gas/unit time}
 
-\item{k}{kay}
+\item{k}{first-order rate constant for consumption, 1/unit time}
 
 \item{params_to_optimize}{Named vector of parameters ("P", "k", "frac_P",
 and/or "frac_k") to optimize against observations}
@@ -63,5 +63,11 @@ m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 Nm = m / 10
 Nd = n / 10
+pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5, k = 0.3)
+# If we don't provide a value for k, it can be estimated from the data
 pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5)
+# Hold k and frac_k constant, optimize P and frac_P
+pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5, params_to_optimize = c("P", "frac_P"))
+# Optimmize only k
+pdr_optimize(time = 0:5, m, n, Nm, Nd, P = 0.5, params_to_optimize = "k")
 }
