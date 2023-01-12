@@ -48,16 +48,49 @@ test_that("set_default_params works", {
 })
 
 
-test_that("estimate_k0 works", {
+test_that("pdr_estimate_k0 works", {
 
   # bad input
-  expect_error(estimate_k0(c(0, 2, 1)), regexp = "must increase")
+  expect_error(pdr_estimate_k0(c(0, 2, 1)), regexp = "must increase")
+
+  # output
+  expect_message(pdr_estimate_k0(1:3, c(1, 0.9, 0.7), frac_k = 0.98), regexp = "Estimated k0")
+  expect_silent(pdr_estimate_k0(1:3, c(1, 0.9, 0.7), frac_k = 0.98, quiet = TRUE))
 
   # negative trend
-  x <- estimate_k0(1:5, c(1, 0.9, 0.7, 0.65, 0.4), frac_k = 0.98)
+  x <- pdr_estimate_k0(1:3, c(1, 0.9, 0.7), frac_k = 0.98, quiet = TRUE)
   expect_type(x, "double")
   # positive trend
-  x <- estimate_k0(1:5, c(0.4, 0.65, 0.7, 0.9, 1), frac_k = 0.98)
+  x <- pdr_estimate_k0(1:3, c(1, 0.9, 0.7), frac_k = 0.98, quiet = TRUE)
   expect_type(x, "double")
-  # what else?
+})
+
+test_that("pdr_optimize works", {
+
+  # input data (from the pdr_optimize examples)
+  tm <- 0:5
+  m <- c(10, 8, 6, 5, 4, 3)
+  n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
+  Nm = m / 10
+  Nd = n / 10
+
+  # bad input
+  expect_error(pdr_optimize(c(0, 2, 1)), regexp = "must increase")
+  expect_error(pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, k = 0.3,
+                            params_to_optimize = "bad_param"),
+               regexp = "`params_to_optimize` must be")
+
+  # try all possible combinations of params_to_optimize: P, k, P and k, etc.
+  params <- c("P", "k", "frac_P", "frac_k")
+  param_sets <- c()
+  for(i in seq_along(params)) {
+    param_sets <- c(param_sets, combn(params, i, simplify = FALSE))
+  }
+  for(p in param_sets) {
+    expect_type(pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, k = 0.3, params_to_optimize = p), "list")
+  }
+
+  # estimates k if not given
+  expect_message(pdr_optimize(tm, m, n, Nm, Nd, P = 0.5), regexp = "Estimated k0")
+
 })

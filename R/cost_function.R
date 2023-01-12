@@ -56,8 +56,6 @@ cost_function <- function(params, # values are set by optim()
   if(!is.null(log_progress)) {
     log_progress(data.frame(P = P, k = k, frac_P = frac_P, frac_k = frac_k, cost = cost))
   }
-  if(!is.finite(cost)) {
-    cat("whoops")
-  }
+
   cost
 }

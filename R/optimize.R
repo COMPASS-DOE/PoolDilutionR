@@ -60,7 +60,7 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
 
   # Estimate k starting value if not given
   if(missing(k)) {
-    k <- estimate_k0(time, n, frac_k)
+    k <- pdr_estimate_k0(time, n, frac_k)
   }
 
   # Create the optim's 'par' vector that controls which parameters to optimize
@@ -71,8 +71,8 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
   }
   params <- all_params[params_to_optimize]
 
-  # Make sure lower and upper only have the variables being optimized;
-  # bad things happen otherwise inside of optim()
+  # Make sure 'lower' and 'upper' only have the variables being optimized;
+  # otherwise bad things happen inside of optim()
   other_params$lower <- other_params$lower[names(params)]
   other_params$upper <- other_params$upper[names(params)]
 
@@ -96,17 +96,17 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
                frac_k = frac_k,
                log_progress = plog)
 
-  out$initial_par <- params
+  out$initial_par <- all_params
   out$progress <- do.call(rbind, c(log_msgs, make.row.names = FALSE))
   out
 }
 
 
-#' Set default parameters for optimization
-#'
-#' @param other_params A named list of parameters
-#'
-#' @return The \code{params} list with entries filled in as needed.
+# Set default parameters for optimization
+#
+# @param other_params A named list of parameters
+#
+# @return The \code{params} list with entries filled in as needed.
 set_default_params <- function(other_params) {
 
   # If method not given, set default
@@ -134,14 +134,15 @@ set_default_params <- function(other_params) {
 #' @param time Vector of numeric time values (e.g. days); first should be zero
 #' @param n Observed heavy isotope (as a volume), same length as time
 #' @param frac_k Fractionation: 13C consumption as a fraction of 12C consumption
+#' @param quiet Suppress output message, logical
 #'
 #' @importFrom stats lm
 #' @return Initial estimate of k0 (consumption rate constant)
 #' @export
 #'
 #' @examples
-#' estimate_k0(1:5, c(1, 0.9, 0.7, 0.65, 0.4), frac_k = 0.98)
-estimate_k0 <- function(time, n, frac_k) {
+#' pdr_estimate_k0(1:5, c(1, 0.9, 0.7, 0.65, 0.4), frac_k = 0.98)
+pdr_estimate_k0 <- function(time, n, frac_k, quiet = FALSE) {
   if(!all(diff(time) > 0)) stop("Time values must increase.")
 
   # Estimate starting k by slope of 13C following para. 21 in VfH2002:
@@ -156,6 +157,7 @@ estimate_k0 <- function(time, n, frac_k) {
   # "...multiplied by 1/a to correct for fractionation against the
   # labeled methane." (BBL: this should be "1/-a"; see equation 8)
   k0 = n_slope / -frac_k
-  message("Estimated k0 = ", round(k0, 3), " from n_slope = ", round(n_slope, 3))
+  if(!quiet) message("Estimated k0 = ", round(k0, 3), " from n_slope = ", round(n_slope, 3))
+
   k0
 }
