@@ -4,16 +4,10 @@
 \alias{set_default_params}
 \title{Set default parameters for optimization}
 \usage{
-set_default_params(params, time, n, frac_k)
+set_default_params(other_params)
 }
 \arguments{
-\item{params}{A named list of parameters}
-
-\item{time}{Vector of numeric time values (e.g. days); first should be zero}
-
-\item{n}{Observed heavy isotope (as a volume), same length as time}
-
-\item{frac_k}{Fractionation value for consumption; see \code{\link{pdr_fractionation}}}
+\item{other_params}{A named list of parameters}
 }
 \value{
 The \code{params} list with entries filled in as needed.

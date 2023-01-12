@@ -12,13 +12,15 @@ cost_function(
   Nm,
   Nd,
   pool = "CH4",
+  P,
+  k,
   frac_P = P_default(pool),
   frac_k = k_default(pool),
   log_progress = NULL
 )
 }
 \arguments{
-\item{params}{Named vector holding optimizer-assigned values for P and k}
+\item{params}{Named list holding optimizer-assigned values for parameters}
 
 \item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
@@ -31,6 +33,10 @@ cost_function(
 \item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
 
 \item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
+
+\item{P}{production rate, unit gas/unit time}
+
+\item{k}{first-order rate constant for consumption, 1/unit time}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 
