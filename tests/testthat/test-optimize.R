@@ -78,7 +78,7 @@ test_that("pdr_optimize works", {
   expect_error(pdr_optimize(c(0, 2, 1)), regexp = "must increase")
   expect_error(pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, k = 0.3,
                             params_to_optimize = "bad_param"),
-               regexp = "`params_to_optimize` must be")
+               regexp = "params_to_optimize must be")
 
   # try all possible combinations of params_to_optimize: P, k, P and k, etc.
   params <- c("P", "k", "frac_P", "frac_k")
