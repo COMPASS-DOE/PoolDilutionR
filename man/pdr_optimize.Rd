@@ -65,17 +65,17 @@ Optimize P (production) and k (consumption) for a pool dilution experiment
 tm <- 0:5
 m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-Nm = m / 10
-Nd = n / 10
+m_prec <- 0.001
+ap_prec = 1
 # Optimize values for P (production) and k (consumption)
-pdr_optimize(time = tm, m, n, Nm, Nd, P = 0.5, k = 0.3)
+pdr_optimize(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
 # If we don't provide a value for k, it can be estimated from the data
-pdr_optimize(tm, m, n, Nm, Nd, P = 0.5)
+pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5)
 # Hold k and frac_k constant, optimize P and frac_P
-pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = c("P", "frac_P"))
+pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, params_to_optimize = c("P", "frac_P"))
 # Optimize only k
-pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = "k")
+pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, params_to_optimize = "k")
 # Optimize only k, bounding its possible values
 op <- list(lower = c("k" = 0.2), upper = c("k" = 0.3))
-pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, k = 0.27, params_to_optimize = "k", other_params = op)
+pdr_optimize(tm, m, n, m_prec, ap_prec, 0.5, 0.27, params_to_optimize = "k", other_params = op)
 }
