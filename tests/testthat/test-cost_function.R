@@ -8,7 +8,7 @@ test_that("cost function works", {
 
   x <- cost_function(params = list(P = 0.5, k = 0.3),
                      time = times,
-                     m = m, n = n, Nm = Nm, Nd = Nd)
+                     m = m, n = n,  m_prec = 0.001, ap_prec = 1)
   expect_type(x, "double")
   expect_identical(length(x), 1L)
 
@@ -23,7 +23,7 @@ test_that("cost function works", {
   }
   cost_function(params = list(P = 0.5, k = 0.3),
                 time = times,
-                m = m, n = n, Nm = Nm, Nd = Nd,
+                m = m, n = n,  m_prec = 0.001, ap_prec = 1,
                 log_progress = logfn)
   expect_true(logfn_called)
 })

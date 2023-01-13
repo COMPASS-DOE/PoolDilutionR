@@ -51,5 +51,5 @@ Optimize P (production) and k (consumption) for a pool dilution experiment
 \examples{
 m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-optimize_pk(time = 0:5, m, n, m_prec, ap_prec, params = list(P0 = 0.5))
+optimize_pk(time = 0:5, m, n, m_prec = 0.001, ap_prec = 1, params = list(P0 = 0.5))
 }

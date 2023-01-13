@@ -50,7 +50,7 @@ This is Eq. 14 from vFH2002 with a few modifications…
 \examples{
 m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n)
+cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, m_prec = 0.001, ap_prec = 1)
 }
 \author{
 K.A. Morris & B. Bond-Lamberty
