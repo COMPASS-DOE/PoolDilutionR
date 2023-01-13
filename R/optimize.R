@@ -4,8 +4,8 @@
 #' @param time Vector of numeric time values (e.g. days); first should be zero
 #' @param m Observed pool size (as a volume), same length as time
 #' @param n Observed heavy isotope (as a volume), same length as time
-#' @param Nm Normalization factor for pool size, see Eq. 12
-#' @param Nd Normalization factor for isotopic signature, see Eq. 13
+#' @param m_prec Instrument precision for pool size, expressed as a standard deviation
+#' @param ap_prec Instrument precision for atom percent, expressed as a standard deviation
 #' @param P production rate, unit gas/unit time
 #' @param k first-order rate constant for consumption, 1/unit time
 #' @param params_to_optimize Named vector of parameters ("P", "k", "frac_P",
@@ -40,7 +40,7 @@
 #' # Optimize only k, bounding its possible values
 #' op <- list(lower = c("k" = 0.2), upper = c("k" = 0.3))
 #' pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, k = 0.27, params_to_optimize = "k", other_params = op)
-pdr_optimize <- function(time, m, n, Nm, Nd,
+pdr_optimize <- function(time, m, n, m_prec, ap_prec,
                          P,
                          k,
                          params_to_optimize = c("P", "k"),
@@ -94,8 +94,8 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
                time = time,
                m = m,
                n = n,
-               Nm = Nm,
-               Nd = Nd,
+               m_prec = m_prec,
+               ap_prec = ap_prec,
                P = P,
                k = k,
                frac_P = frac_P,

@@ -8,8 +8,8 @@ pdr_optimize(
   time,
   m,
   n,
-  Nm,
-  Nd,
+  m_prec,
+  ap_prec,
   P,
   k,
   params_to_optimize = c("P", "k"),
@@ -29,9 +29,9 @@ pdr_optimize(
 
 \item{n}{Observed heavy isotope (as a volume), same length as time}
 
-\item{Nm}{Normalization factor for pool size, see Eq. 12}
+\item{m_prec}{Instrument precision for pool size, expressed as a standard deviation}
 
-\item{Nd}{Normalization factor for isotopic signature, see Eq. 13}
+\item{ap_prec}{Instrument precision for atom percent, expressed as a standard deviation}
 
 \item{P}{production rate, unit gas/unit time}
 
