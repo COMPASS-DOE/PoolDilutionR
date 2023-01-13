@@ -18,7 +18,8 @@ pdr_optimize(
   frac_k = k_default(pool),
   other_params = list(),
   cost_fn = cost_function,
-  prediction_fn = ap_prediction
+  prediction_fn = ap_prediction,
+  include_progress = FALSE
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ and/or "frac_k") to optimize against observations}
 
 \item{prediction_fn}{Prediction function that the cost function will use;
 the default is \code{\link{ap_prediction}}}
+
+\item{include_progress}{Include detailed optimizer progress data in output?}
 }
 \value{
 The output of \code{\link{optim}}.
@@ -72,4 +75,7 @@ pdr_optimize(tm, m, n, Nm, Nd, P = 0.5)
 pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = c("P", "frac_P"))
 # Optimize only k
 pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = "k")
+# Optimize only k, bounding its possible values
+op <- list(lower = c("k" = 0.2), upper = c("k" = 0.3))
+pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, k = 0.27, params_to_optimize = "k", other_params = op)
 }

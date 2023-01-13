@@ -108,4 +108,10 @@ test_that("pdr_optimize works", {
                                               upper = c("k" = bounds[2])))
   expect_true(bounded$par["k"] >= bounds[1])
   expect_true(bounded$par["k"] <= bounds[2])
+
+  # include_progress works
+  x <- pdr_optimize(tm, m, n, Nm, Nd, P = P, k = k)
+  expect_null(x$progress)
+  y <- pdr_optimize(tm, m, n, Nm, Nd, P = P, k = k, include_progress = TRUE)
+  expect_s3_class(y$progress, "data.frame")
 })

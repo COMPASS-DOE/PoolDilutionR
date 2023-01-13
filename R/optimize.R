@@ -17,6 +17,7 @@
 #' @param cost_fn Cost function to use; the default is \code{\link{cost_function}}
 #' @param prediction_fn Prediction function that the cost function will use;
 #' the default is \code{\link{ap_prediction}}
+#' @param include_progress Include detailed optimizer progress data in output?
 #'
 #' @importFrom stats optim
 #' @return The output of \code{\link{optim}}.
@@ -36,6 +37,9 @@
 #' pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = c("P", "frac_P"))
 #' # Optimize only k
 #' pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, params_to_optimize = "k")
+#' # Optimize only k, bounding its possible values
+#' op <- list(lower = c("k" = 0.2), upper = c("k" = 0.3))
+#' pdr_optimize(tm, m, n, Nm, Nd, P = 0.5, k = 0.27, params_to_optimize = "k", other_params = op)
 pdr_optimize <- function(time, m, n, Nm, Nd,
                          P,
                          k,
@@ -45,7 +49,8 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
                          frac_k = k_default(pool),
                          other_params = list(),
                          cost_fn = cost_function,
-                         prediction_fn = ap_prediction) {
+                         prediction_fn = ap_prediction,
+                         include_progress = FALSE) {
 
   # Set defaults if not given by user
   other_params <- set_default_params(other_params)
@@ -99,7 +104,9 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
 
   out$initial_par <- all_params
   out$initial_other <- other_params
-  out$progress <- do.call(rbind, c(log_msgs, make.row.names = FALSE))
+  if(include_progress) {
+    out$progress <- do.call(rbind, c(log_msgs, make.row.names = FALSE))
+  }
   out
 }
 
