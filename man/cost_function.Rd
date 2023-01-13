@@ -2,7 +2,7 @@
 % Please edit documentation in R/cost_function.R
 \name{cost_function}
 \alias{cost_function}
-\title{Cost Function}
+\title{Cost function between observed and predicted pools}
 \usage{
 cost_function(
   params,
@@ -11,11 +11,11 @@ cost_function(
   n,
   m_prec,
   ap_prec,
-  pool = "CH4",
   P,
   k,
-  frac_P = P_default(pool),
-  frac_k = k_default(pool),
+  pool = "CH4",
+  frac_P = frac_P_default(pool),
+  frac_k = frac_k_default(pool),
   log_progress = NULL
 )
 }
@@ -32,11 +32,11 @@ cost_function(
 
 \item{ap_prec}{Instrument precision for atom percent, expressed as a standard deviation}
 
-\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
-
 \item{P}{production rate, unit gas/unit time}
 
 \item{k}{first-order rate constant for consumption, 1/unit time}
+
+\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 
@@ -45,13 +45,14 @@ cost_function(
 \item{log_progress}{An optional logging function}
 }
 \value{
-Returns the sum of squares between predicted and observed m and AP
+Returns a cost metric summarizing the difference between the
+predicted and observed \code{m} (total pool amount) and \code{AP} (atom percent).
 }
 \description{
-Cost Function
+Cost function between observed and predicted pools
 }
 \note{
-This is Eq. 14 from vFH2002 with a few modifications…
+This implements Equations 12-14 from von Fischer and Hedin (2002).
 }
 \examples{
 m <- c(10, 8, 6, 5, 4, 3)

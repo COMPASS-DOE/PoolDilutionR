@@ -1,5 +1,5 @@
 
-#' Atom Percent Prediction
+#' Predict total pool, heavy isotope pool, and atom percent
 #'
 #' @param time Vector of numeric time values (e.g. days); first should be zero
 #' @param m0 pool size at time zero, as a volume
@@ -13,14 +13,14 @@
 #' @return Returns a data frame with \code{mt}, \code{nt}, and \code{AP_pred} (atom percent) for each time step
 #' @export
 #'
-#' @note All combined, this is Eq. 11 from vFH2002 with a few modifications.
+#' @note This is Eq. 11 from von Fischer and Hedin 2002 with a few modifications.
 #' @author K.A. Morris & B. Bond-Lamberty
 #' @examples
 #' ap_prediction(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)
 ap_prediction <- function(time, m0, n0, P, k,
                           pool = "CH4",
-                          frac_P = P_default(pool),
-                          frac_k = k_default(pool)) {
+                          frac_P = frac_P_default(pool),
+                          frac_k = frac_k_default(pool)) {
 
   if(! is.numeric(time)) stop("Time must be numeric.")
   if(!all(diff(time) > 0)) stop("Time values must increase.")
@@ -29,7 +29,7 @@ ap_prediction <- function(time, m0, n0, P, k,
   kfrac <- k * frac_k
   pfrac <- P * frac_P
   nt <- pfrac / kfrac - (pfrac / kfrac - n0) * exp(-kfrac * time)
-  # Equation 5 (and denominator in Eq. 11 of von Fischer 2002):
+  # Equation 5 (and denominator in Eq. 11 of von Fischer and Hedin 2002):
   mt <- P / k - (P / k - m0) * exp(-k * time)
   ap <- nt / mt * 100
 

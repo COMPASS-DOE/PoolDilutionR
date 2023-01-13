@@ -1,5 +1,5 @@
 
-#' Cost Function
+#' Cost function between observed and predicted pools
 #'
 #' @param params Named list holding optimizer-assigned values for parameters
 #' @param time Vector of numeric time values (e.g. days); first should be zero
@@ -7,18 +7,19 @@
 #' @param n Observed heavy isotope (as a volume), same length as time
 #' @param m_prec Instrument precision for pool size, expressed as a standard deviation
 #' @param ap_prec Instrument precision for atom percent, expressed as a standard deviation
-#' @param pool Name of pool; see \code{\link{pdr_fractionation}}
 #' @param P production rate, unit gas/unit time
 #' @param k first-order rate constant for consumption, 1/unit time
+#' @param pool Name of pool; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #' @param log_progress An optional logging function
 #'
 #' @importFrom stats sd
-#' @return Returns the sum of squares between predicted and observed m and AP
+#' @return Returns a cost metric summarizing the difference between the
+#' predicted and observed \code{m} (total pool amount) and \code{AP} (atom percent).
 #' @export
 #'
-#' @note This is Eq. 14 from vFH2002 with a few modifications…
+#' @note This implements Equations 12-14 from von Fischer and Hedin (2002).
 #' @author K.A. Morris & B. Bond-Lamberty
 #' @examples
 #' m <- c(10, 8, 6, 5, 4, 3)
@@ -26,11 +27,11 @@
 #' cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, m_prec = 0.001, ap_prec = 1)
 cost_function <- function(params, # values are set by optim()
                           time, m, n, m_prec, ap_prec,
-                          pool = "CH4",
                           P,
                           k,
-                          frac_P = P_default(pool),
-                          frac_k = k_default(pool),
+                          pool = "CH4",
+                          frac_P = frac_P_default(pool),
+                          frac_k = frac_k_default(pool),
                           log_progress = NULL) {
 
   # If the optimizer passes in values for P/k/frac_P/frac_k, they
