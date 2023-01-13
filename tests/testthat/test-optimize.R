@@ -93,4 +93,19 @@ test_that("pdr_optimize works", {
   # estimates k if not given
   expect_message(pdr_optimize(tm, m, n, Nm, Nd, P = 0.5), regexp = "Estimated k0")
 
+  # initial parameters respected
+  P <- 0.5
+  k <- 0.3
+  default <- pdr_optimize(tm, m, n, Nm, Nd, P = P, k = k)
+  expect_equal(default$initial_par["P"], P, ignore_attr = TRUE)
+  expect_equal(default$initial_par["k"], k, ignore_attr = TRUE)
+
+  # upper and lower bounds respected
+  bounds <- c(default$par["k"] * 1.1, default$par["k"] * 1.3)
+  bounds <- unname(bounds)
+  bounded <- pdr_optimize(tm, m, n, Nm, Nd, P = P, k = k,
+                          other_params = list(lower = c("k" = bounds[1]),
+                                              upper = c("k" = bounds[2])))
+  expect_true(bounded$par["k"] >= bounds[1])
+  expect_true(bounded$par["k"] <= bounds[2])
 })

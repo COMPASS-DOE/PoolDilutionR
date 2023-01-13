@@ -64,17 +64,18 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
   }
 
   # Create the optim's 'par' vector that controls which parameters to optimize
-  params <- rep(NA_real_, length(params_to_optimize))
   all_params <- c("P" = P, "k" = k, "frac_P" = frac_P, "frac_k" = frac_k)
   if(any(!params_to_optimize %in% names(all_params))) {
-    stop("`params_to_optimize` must be P, k, frac_P, and/or frac_k")
+    stop("params_to_optimize must be P, k, frac_P, and/or frac_k")
   }
   params <- all_params[params_to_optimize]
 
   # Make sure 'lower' and 'upper' only have the variables being optimized;
   # otherwise bad things happen inside of optim()
-  other_params$lower <- other_params$lower[names(params)]
-  other_params$upper <- other_params$upper[names(params)]
+  other_params$lower <- other_params$lower[intersect(names(params),
+                                                     names(other_params$lower))]
+  other_params$upper <- other_params$upper[intersect(names(params),
+                                                     names(other_params$upper))]
 
   # Call optim()
   out <- optim(par = params,
@@ -97,6 +98,7 @@ pdr_optimize <- function(time, m, n, Nm, Nd,
                log_progress = plog)
 
   out$initial_par <- all_params
+  out$initial_other <- other_params
   out$progress <- do.call(rbind, c(log_msgs, make.row.names = FALSE))
   out
 }
