@@ -37,7 +37,7 @@ Prediction of P, gross production rate, and k, first order rate constant for con
 
 Optimization of predictions using data quality and deviation in pool size (Nm) and isotopic composition (Nd) over time.
 
-    `result <- optimize_pk(time = dat$time_days,
+    `result <- pdr_optimize(time = dat$time_days,
                           m = dat$cal12CH4ml + dat$cal13CH4ml,
                           n = dat$cal13CH4ml,
                           Nm = dat$Nm,

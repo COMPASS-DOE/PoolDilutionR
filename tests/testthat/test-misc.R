@@ -1,14 +1,14 @@
 
 test_that("Default P and k functions work", {
 
-  expect_error(P_default("bad pool"), "pool is not listed")
-  expect_error(k_default("bad pool"), "pool is not listed")
+  expect_error(frac_P_default("bad pool"), "pool is not listed")
+  expect_error(frac_k_default("bad pool"), "pool is not listed")
 
-  p <- P_default("CH4")
+  p <- frac_P_default("CH4")
   expect_type(p, "double")
   expect_length(p, 1L)
 
-  k <- k_default("CH4")
+  k <- frac_k_default("CH4")
   expect_type(k, "double")
   expect_length(k, 1L)
 })

@@ -2,7 +2,7 @@
 % Please edit documentation in R/AP_pred.R
 \name{ap_prediction}
 \alias{ap_prediction}
-\title{Atom Percent Prediction}
+\title{Predict total pool, heavy isotope pool, and atom percent}
 \usage{
 ap_prediction(
   time,
@@ -11,8 +11,8 @@ ap_prediction(
   P,
   k,
   pool = "CH4",
-  frac_P = P_default(pool),
-  frac_k = k_default(pool)
+  frac_P = frac_P_default(pool),
+  frac_k = frac_k_default(pool)
 )
 }
 \arguments{
@@ -36,10 +36,10 @@ ap_prediction(
 Returns a data frame with \code{mt}, \code{nt}, and \code{AP_pred} (atom percent) for each time step
 }
 \description{
-Atom Percent Prediction
+Predict total pool, heavy isotope pool, and atom percent
 }
 \note{
-All combined, this is Eq. 11 from vFH2002 with a few modifications.
+This is Eq. 11 from von Fischer and Hedin 2002 with a few modifications.
 }
 \examples{
 ap_prediction(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)

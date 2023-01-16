@@ -9,8 +9,8 @@ utils::globalVariables("pdr_fractionation")
 #' @export
 #'
 #' @examples
-#' P_default("CH4")
-P_default <- function(pool) {
+#' frac_P_default("CH4")
+frac_P_default <- function(pool) {
   if(!pool %in% pdr_fractionation$Pool) {
     stop("This pool is not listed in pdr_fractionation")
   }
@@ -29,8 +29,8 @@ P_default <- function(pool) {
 #' @export
 #'
 #' @examples
-#' k_default("CH4")
-k_default <- function(pool) {
+#' frac_k_default("CH4")
+frac_k_default <- function(pool) {
   if(!pool %in% pdr_fractionation$Pool) {
     stop("This pool is not listed in pdr_fractionation")
   }
