@@ -13,9 +13,9 @@
 #' }
 "pdr_fractionation"
 
-#' Example time series data from a methane pool experiment with isotopic signature and pool size.
+#' Example time series data from a methane dilution pool experiment.
 #'
-#' For use in PoolDilutionR, sequential measurements of methane concentration and isotopic signature were taken using a Picarro G2920 with a Small Sample Introducion module.
+#' Sequential measurements of methane concentration and isotopic signature were taken using a Picarro G2920 with a Small Sample Introduction module.
 #' This instrument provides gas concentrations in ppm and signatures in delta-13C, here we provide those data converted into volume of methane and atom percent.
 #'
 #' @format
