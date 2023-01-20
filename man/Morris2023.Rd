@@ -3,20 +3,21 @@
 \docType{data}
 \name{Morris2023}
 \alias{Morris2023}
-\title{Example isotopic time series data from a methane pool experiment.}
+\title{Example time series data from a methane pool experiment with isotopic signature and pool size.}
 \format{
 \describe{
-  \item{id}{Name of pool (gas or solid)}
-  \item{time_days}{Fractionation value of production (P)}
-  \item{cal12CH4ml}{Fractionation value of consumption (k)}
-  \item{cal13CH4ml}{Default for this pool? Logical}
-  \item{AP_obs}{Source paper or URL}
+  \item{id}{Sample ID}
+  \item{time_days}{time in days between measurements, starting a 0}
+  \item{cal12CH4ml}{ml of 12C-CH4 at each timestep}
+  \item{cal13CH4ml}{ml of 13C-CH4 at each timestep}
+  \item{AP_obs}{atom percent 13C-CH4 at each timestep}
 }
 }
 \usage{
 Morris2023
 }
 \description{
-Add description.
+For use in PoolDilutionR, sequential measurements of methane concentration and isotopic signature were taken using a Picarro G2920 with a Small Sample Introducion module.
+This instrument provides gas concentrations in ppm and signatures in delta-13C, here we provide those data converted into volume of methane and atom percent.
 }
 \keyword{datasets}
