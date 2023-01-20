@@ -3,7 +3,7 @@
 \docType{data}
 \name{Morris2023}
 \alias{Morris2023}
-\title{Example time series data from a methane dilution pool experiment.}
+\title{Time series data from a methane pool dilution experiment.}
 \format{
 \describe{
   \item{id}{Sample ID}
