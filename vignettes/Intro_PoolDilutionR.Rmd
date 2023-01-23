@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## What is Pool Dilution?
 
-Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artifically enriched with its heavy isolog. After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations (Kirkham and Bartholomew 1954).  \
+Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue. After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations (Kirkham and Bartholomew 1954).  \
 
 
 ```{r setup, include=FALSE}
@@ -34,12 +34,67 @@ theme_set(theme_minimal() + theme(text = element_text(size = 11)))
 
 ## PoolDilutionR (PDR)
 
-PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. Unlike other pool dilution methods, this set of equations takes into account the effect of isotopic fractionation (see Fractionation below).  
+PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see Fractionation below).\
+\
+\
+Below we see 5 time points collected during a methane pool dilution experiment for one soil sample (Morris et al, in prep).\
+\
+Key to columns:\
+time_days: vector of time between samples in days\
+cal12CH4ml: mL's of 12C methane, calculated from incubation volume and sample ppm\
+cal13CH4ml: mL's of 13C methane, calculated from incubation volume and sample ppm\
+AP_obs: percent of methane that is 13C methane, 13C/(12C + 13C) * 100\
+\
 ```{r Input Data, message = FALSE}
 Morris2023 %>%
   filter(id == "71") %>%
   select(-"id") %>%
   kbl(caption = "Data for Sample #71")
+```
+
+## Solving for gross rates
+
+To solve for gross methane production and consumption for this sample, we call pdr_optimize(), which uses optim() to minimize the error in the observed vs predicted pool size and isotopic composition. Errors are weighted by a  combination of data quality and explanitory power (see cost_fuction()) and predictions are made using ap_prediction().\
+\
+\
+From von Fischer and Hedin 2002\
+\
+$$
+AP_t = \frac{n_0^{-k\alpha t}}{\frac{P}{k}-(\,\frac{P}{k}-m_0)^{-kt}\,}
+$$
+
+$$
+\alpha = \frac{k_{(\,^{13}C)\,}}{k_{(\,^{12}C)\,}}
+$$
+\
+Where:\
+$k_{(\,^{13}C)\,}$ is the first-order rate constant for consumption of 13CH4\
+and\
+$k_{(\,^{12}C)\,}$ is the first-order rate constant for consumption of 12CH4\
+\
+```{r Solve for P and k}
+
+Morris2023 %>%
+  filter(id == "71") -> OneSample_dat
+
+OneSampleResult <- list()
+
+OneSample <- pdr_optimize(time = OneSample_dat$time_days, #time as a vector
+                          m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, #total pool size
+                          n = OneSample_dat$cal13CH4ml,#pool size of heavy isotopologue
+                          P = 0.1, #inital production rate for optim()
+                          pool = "CH4", #indicates using the default fractionation rates of methane
+                          m_prec = 0.001, #instrument precision for total pool size, as standard deviation
+                          ap_prec = 1, #instrument precision for atom percent, as standard deviation
+                          include_progress = FALSE)
+
+    P <- OneSample$par["P"]
+    OneSampleResult <- tibble(P = P,
+                              k = OneSample$par["k"],
+                              k0 = OneSample$initial_par["k"],
+                              convergence = OneSample$convergence,
+                              message = OneSample$message)
+kbl(OneSampleResult, caption = "Optimized P and k")
 ```
 
 ```{r Example Data, echo = FALSE, message = TRUE, out.width = c("100%", "300px")}
