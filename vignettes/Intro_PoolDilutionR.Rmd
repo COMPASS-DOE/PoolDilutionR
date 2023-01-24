@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 # What is Pool Dilution?
 
-Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue. After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations (Kirkham and Bartholomew 1954).  \
+Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue (molecules of the same chemical formula and bonding structure that differ only in their isotopic composition). After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations (Kirkham and Bartholomew 1954).  \
 
 
 ```{r setup, include=FALSE}
@@ -294,3 +294,9 @@ Poor fits can result from a variety of issues, from instrument error, to incorre
 ### Cost Function  
 ### Prediction  
 ### Fractionation  
+  
+Fractionation describes the tendency of heavier isotopes and isotopologues to resist chemical transformation, whether these be phase changes, passive (term?) chemical reactions, or enzyme-mediated. There are two major types of fractionation. Equilibrium fractionation occurs when phase changes favor the heavier isotopologue staying a lower energy state (Urey 1947, Druhan, Winnick, and Thullner 2019). A typical example would be the relative enrichment of the ocean in heavy water $H_2^{18}O$ due to preferential evaporation of light water $H_2^{16}O$. The second major type of fractionation is kinetic, and is classically associated enzyme selectivity (citation). This is what drives the distinction in $^{13}C$ signatures between C3 and C4 plants (citation).  
+
+While our knowledge of enzyme diversity is rapidly expanding...
+
+## Literature
