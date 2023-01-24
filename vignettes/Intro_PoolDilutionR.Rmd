@@ -1,6 +1,9 @@
 ---
 title: "Introduction to PoolDilutionR"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{Intro_PoolDilutionR}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,7 +19,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## What is Pool Dilution?
+# What is Pool Dilution?
 
 Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue. After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations (Kirkham and Bartholomew 1954).  \
 
@@ -27,6 +30,7 @@ library(dplyr)
 library(ggplot2)
 library(ggpmisc)
 library(tidyr)
+library(scales)
 library(kableExtra)
 
 theme_set(theme_minimal() + theme(text = element_text(size = 11)))
@@ -34,15 +38,17 @@ theme_set(theme_minimal() + theme(text = element_text(size = 11)))
 
 ## PoolDilutionR (PDR)
 
-PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see Fractionation below).  
+PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see Under the hood for more information.).  
 \
-**Worked Example**\
+   
+### Worked Example  
+
 Below are 5 data points collected during a methane pool dilution experiment for one soil sample.  
 Data source, Morris et al, *in prep*.  \
 \
-Key to columns:
+**Key to columns**:
 
-|    time_days: vector of time between samples in days  
+|    time_days: time (in days) between samples 
 |    cal12CH4ml: mL's of 12C methane, calculated from incubation volume and sample ppm  
 |    cal13CH4ml: mL's of 13C methane, calculated from incubation volume and sample ppm  
 |    AP_obs: percent of methane that is 13C methane, 13C/(12C + 13C) * 100  
@@ -53,17 +59,25 @@ Morris2023 %>%
   kbl(caption = "Data for Sample #71")
 ```
 
-## Solving for gross rates
+### Solving for gross rates
 
-To solve for gross methane production and consumption for this sample, we call pdr_optimize(), which uses optim() to minimize the error in the observed vs predicted pool size and isotopic composition. Errors are weighted by a  combination of data quality and explanitory power (see cost_fuction()) and predictions are made using ap_prediction().\
+To solve for gross methane production and consumption for this sample, we call pdr_optimize(), which uses optim() to minimize the error in the observed vs predicted pool size and isotopic composition. Errors are weighted by a  combination of data quality and explanatory power (see cost_fuction()) and predictions are made using ap_prediction(). See Under the hood for more information.\
 \
 \
-From von Fischer and Hedin 2002\
+From von Fischer and Hedin 2002 (equation 11):\
 \
 $$
 AP_t = \frac{n_0^{-k\alpha t}}{\frac{P}{k}-(\,\frac{P}{k}-m_0)^{-kt}\,}
 $$
-
+Where:  
+$AP_t$ is the predicted atom percent composition of the pool at time $t$.    
+$n_0$ is the pool size of the heavy isotopologue at time zero.  
+$m_0$ is the total pool size at time zero.  
+$P$ is the gross production rate.  
+$k$ is the first order rate constant of consumption.  
+$t$ is time.  
+  
+and    
 $$
 \alpha = \frac{k_{(\,^{13}C)\,}}{k_{(\,^{12}C)\,}}
 $$
@@ -82,7 +96,7 @@ OneSample <- pdr_optimize(time = OneSample_dat$time_days, #time as a vector
                           m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, #total pool size
                           n = OneSample_dat$cal13CH4ml,#pool size of heavy isotopologue
                           P = 0.1, #inital production rate for optim()
-                          pool = "CH4", #indicates using the default fractionation rates of methane
+                          pool = "CH4", #indicates use of default fractionation rates of methane
                           m_prec = 0.001, #instrument precision for total pool size, as standard deviation
                           ap_prec = 1, #instrument precision for atom percent, as standard deviation
                           include_progress = FALSE)
@@ -94,17 +108,21 @@ OneSampleResult <- tibble(P = P,
                           convergence = OneSample$convergence,
                           message = OneSample$message)
 ```
-**Output**
-```{r}
+### Output
+```{r OneSample Results}
 OneSampleResult %>%
   mutate_if(is.numeric, format, digits=4) %>%
   kbl(caption = "Optimized P and k")
 ```
 
+From k, the gross consumption rate can be calculated for any pool size of interest.  
+  
+
 ## Variations with pdr_optimize()
   
 Feeding data from the following samples results in fits of different quality.  
-```{r Example Data, echo = FALSE, message = TRUE, out.width = c("100%", "300px")}
+  
+```{r Multi-sample Example Input, echo = FALSE, fig.height = 5, fig.width = 7, fig.align='center'}
 facet_labels <- c(
     AP_obs = "Atom% Observed",
     cal12CH4ml = "12C Methane (mL)",
@@ -124,7 +142,7 @@ Morris2023 %>%
 print(input_data)
 ```
 
-```{r Do the thing!, echo=TRUE, message = FALSE, warning = FALSE, results='hide'}
+```{r Do the thing!, echo=FALSE, message = FALSE, results='hide'}
 pk_results <- list()
 incdat_out <- list()
 all_predictions <- list()
@@ -199,12 +217,13 @@ result <- pdr_optimize(time = dat$time_days,
 }
 
 pk_results <- bind_rows(pk_results, .id = "id")
-incdat_out <- bind_rows(incdat_out)
+incdat_out <- bind_rows(incdat_out, .id = "id")
 all_predictions <- bind_rows(all_predictions, .id = "id")
 
 incdat_out %>%
     # compute correlation between predictions and observations
     group_by(id) %>%
+    #mutate(id == as.character(id)) %>%
     summarise(m_cor = cor(cal12CH4ml + cal13CH4ml, mt),
               ap_cor = cor(AP_obs, AP_pred)) ->
     performance_summary
@@ -219,15 +238,19 @@ pk_results %>%
     incdat_out
 ```
 
-```{r echo = FALSE}
+### Multisample Output
+  
+  Here we see variation among six samples in the goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane). Grey lines represent values tested on the way to the final optimized fit.  
+\
+```{r Multisample Fit APE, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 # ----- Plot AP results -----
 incdat_out %>%
   ggplot(aes(time_days, AP_obs, color = as.factor(id))) +
-  geom_point(aes(shape = ""), size = 3.75) +
+  geom_point(aes(shape = ""), size = 4) +
   geom_line(data = filter(all_predictions),
             aes(time, AP_pred, group = paste(id, P, k)), color = "grey", linetype = 2) +
   geom_line(aes(y = AP_pred, group = id, linetype = ""),
-            linewidth = 1.25) +
+            linewidth = 1.5) +
   scale_linetype_manual(name = "Prediction",
                         values = "dotted") +
   scale_shape_manual(name = "Observations",
@@ -236,16 +259,18 @@ incdat_out %>%
   facet_wrap(~as.numeric(id), scales = "free") +
   xlab("\n Timestep \n") + ylab("\n (13C-CH4/Total CH4) x 100 \n") +
   ggtitle("\n Atom% 13C \n") + theme(legend.position = "bottom")
-
-
-# ----- Plot total methane results -----
+```
+  
+  Pool size is predictions are consistently tight to observations, whereas signature fits have more variation.
+  
+```{r Multisample Fit Total Pool, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 incdat_out %>%
   ggplot(aes(time_days, cal12CH4ml + cal13CH4ml, color = as.factor(id))) +
-  geom_point(aes(shape = ""), size = 3.75) +
+  geom_point(aes(shape = ""), size = 4) +
   geom_line(data = filter(all_predictions),
             aes(time, mt, group = paste(id, P, k)), color = "grey", linetype = 2) +
   geom_line(aes(y = mt, group = id, linetype = ""),
-            linewidth = 1.25) +
+            linewidth = 1.5) +
   scale_linetype_manual(name = "Prediction",
                         values = "dotted") +
   scale_shape_manual(name = "Observations",
@@ -255,7 +280,17 @@ incdat_out %>%
   xlab("\n Timestep \n") + ylab("\n Volume (mL) \n") +
   ggtitle("\n Total Methane \n") + theme(legend.position = "bottom")
 ```
-```
-## Cost Function
-## Prediction
-## Fractionation
+\
+Poor fits can result from a variety of issues, from instrument error, to incorrect assumptions regarding fractionation rates. To help address the later, PDR allows users to choose up to four parameters (P, k, fractionation of P [frac_p], fractionation of k [frac_k]) that pdr_optimize will vary for optimizing data fit. Caution should be used in parameter selection, based on prior knowledge of the biological system.  
+\
+
+### Variable Fractionation  
+\
+
+### Known Production Rate  
+\
+
+## Under the hood.  
+### Cost Function  
+### Prediction  
+### Fractionation  
