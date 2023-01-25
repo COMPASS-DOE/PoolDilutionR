@@ -2,7 +2,7 @@
 % Please edit documentation in R/optimize.R
 \name{pdr_optimize}
 \alias{pdr_optimize}
-\title{Optimize P (production) and k (consumption) for a pool dilution experiment}
+\title{Optimize production and consumption parameters for pool dilution data}
 \usage{
 pdr_optimize(
   time,
@@ -59,7 +59,7 @@ the default is \code{\link{ap_prediction}}}
 The output of \code{\link{optim}}.
 }
 \description{
-Optimize P (production) and k (consumption) for a pool dilution experiment
+Optimize production and consumption parameters for pool dilution data
 }
 \examples{
 tm <- 0:5
@@ -78,4 +78,7 @@ pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, params_to_optimize = "k")
 # Optimize only k, bounding its possible values
 op <- list(lower = c("k" = 0.2), upper = c("k" = 0.3))
 pdr_optimize(tm, m, n, m_prec, ap_prec, 0.5, 0.27, params_to_optimize = "k", other_params = op)
+}
+\seealso{
+\code{\link{pdr_optimize_tidy}}
 }
