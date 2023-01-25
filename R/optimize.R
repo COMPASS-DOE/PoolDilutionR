@@ -213,8 +213,7 @@ pdr_optimize_tidy <- function(...) {
 
   out1 <- data.frame(par = names(x$par),
                     value = unname(x$par))
-  out2 <- data.frame(convergence = rep(x$convergence, nrow(out1)),
-                    message = rep(x$message, nrow(out1)))
+  out2 <- data.frame(convergence = rep(x$convergence, nrow(out1)))
 
   cbind(out1, initials, out2)
 }
