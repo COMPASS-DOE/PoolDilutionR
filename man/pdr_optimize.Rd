@@ -14,12 +14,13 @@ pdr_optimize(
   k,
   params_to_optimize = c("P", "k"),
   pool = "CH4",
-  frac_P = frac_P_default(pool),
-  frac_k = frac_k_default(pool),
+  frac_P = NULL,
+  frac_k = NULL,
   other_params = list(),
   cost_fn = cost_function,
   prediction_fn = ap_prediction,
-  include_progress = FALSE
+  include_progress = FALSE,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -54,6 +55,8 @@ and/or "frac_k") to optimize against observations}
 the default is \code{\link{ap_prediction}}}
 
 \item{include_progress}{Include detailed optimizer progress data in output?}
+
+\item{quiet}{Suppress output messages, logical}
 }
 \value{
 The output of \code{\link{optim}}.
@@ -66,7 +69,7 @@ tm <- 0:5
 m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 m_prec <- 0.001
-ap_prec = 1
+ap_prec <- 1
 # Optimize values for P (production) and k (consumption)
 pdr_optimize(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
 # If we don't provide a value for k, it can be estimated from the data
