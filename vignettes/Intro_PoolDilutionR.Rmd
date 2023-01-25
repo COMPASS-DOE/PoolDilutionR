@@ -282,12 +282,12 @@ Poor fits can result from a variety of issues, from instrument error, to incorre
 ### Variable Fractionation  
 
 The most common goal in pool dilution experiments is to estimate production
-_P_ and consumption _k_, but `PoolDilutionR` can be used to optimize
-any or all of four parameters: _P_, _k_, _frac_P_ (the isotopic fractionation
-value for production), and _frac_k_ (the fractionation for consumption).
+`P` and consumption `k`, but `PoolDilutionR` can be used to optimize
+any or all of four parameters: `P`, `k`, `frac_P` (the isotopic fractionation
+value of production), and `frac_k` (fractionation of consumption).
 
 For example, we can tell `pdr_optimize` that the production and consumption
-values are fixed (i.e., known) and ask it to optimize the fractionation rates:
+values are fixed (i.e., known) and ask it to optimize only the fractionation rates:
 
 ```{r}
 pdr_optimize_tidy(time = OneSample_dat$time_days,
