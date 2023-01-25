@@ -1,7 +1,7 @@
 # PoolDilutionR
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/COMPASS-DOE/PoolDilutionR/workflows/R-CMD-check/badge.svg)](https://github.com/COMPASS-DOE/PoolDilutionR/actions)
+[![R-CMD-check](https://github.com/COMPASS-DOE/PoolDilutionR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/COMPASS-DOE/PoolDilutionR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 An R package for easy calculation of rates from isotope pool dilution experiments.

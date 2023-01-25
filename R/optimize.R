@@ -1,5 +1,5 @@
 
-#' Optimize P (production) and k (consumption) for a pool dilution experiment
+#' Optimize production and consumption parameters for pool dilution data
 #'
 #' @param time Vector of numeric time values (e.g. days); first should be zero
 #' @param m Observed pool size (as a volume), same length as time
@@ -18,9 +18,11 @@
 #' @param prediction_fn Prediction function that the cost function will use;
 #' the default is \code{\link{ap_prediction}}
 #' @param include_progress Include detailed optimizer progress data in output?
+#' @param quiet Suppress output messages, logical
 #'
 #' @importFrom stats optim
 #' @return The output of \code{\link{optim}}.
+#' @seealso \code{\link{pdr_optimize_tidy}}
 #' @export
 #'
 #' @examples
@@ -28,7 +30,7 @@
 #' m <- c(10, 8, 6, 5, 4, 3)
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 #' m_prec <- 0.001
-#' ap_prec = 1
+#' ap_prec <- 1
 #' # Optimize values for P (production) and k (consumption)
 #' pdr_optimize(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
 #' # If we don't provide a value for k, it can be estimated from the data
@@ -45,12 +47,22 @@ pdr_optimize <- function(time, m, n, m_prec, ap_prec,
                          k,
                          params_to_optimize = c("P", "k"),
                          pool = "CH4",
-                         frac_P = frac_P_default(pool),
-                         frac_k = frac_k_default(pool),
+                         frac_P = NULL,
+                         frac_k = NULL,
                          other_params = list(),
                          cost_fn = cost_function,
                          prediction_fn = ap_prediction,
-                         include_progress = FALSE) {
+                         include_progress = FALSE,
+                         quiet = FALSE) {
+
+  if(is.null(frac_P)) {
+    if(!quiet) message("No frac_P provided; looking up from pdr_fractionation table")
+    frac_P <- frac_P_default(pool)
+  }
+  if(is.null(frac_k)) {
+    if(!quiet) message("No frac_k provided; looking up from pdr_fractionation table")
+    frac_k <- frac_k_default(pool)
+  }
 
   # Set defaults if not given by user
   other_params <- set_default_params(other_params)
@@ -65,7 +77,7 @@ pdr_optimize <- function(time, m, n, m_prec, ap_prec,
 
   # Estimate k starting value if not given
   if(missing(k)) {
-    k <- pdr_estimate_k0(time, n, frac_k)
+    k <- pdr_estimate_k0(time, n, frac_k, quiet = quiet)
   }
 
   # Create the optim's 'par' vector that controls which parameters to optimize
@@ -169,4 +181,40 @@ pdr_estimate_k0 <- function(time, n, frac_k, quiet = FALSE) {
   if(!quiet) message("Estimated k0 = ", round(k0, 3), " from n_slope = ", round(n_slope, 3))
 
   k0
+}
+
+
+#' Optimize production and consumption parameters for pool dilution data
+#'
+#' @param ... Parameters to be passed on to \code{\link{pdr_optimize}}
+#'
+#' @return The output of \code{\link{pdr_optimize}} summarized in a data frame,
+#' with one line per parameter estimates (\code{P}, \code{k},
+#' \code{frac_P}, and/or \code{frac_k}).
+#' @export
+#' @seealso \code{\link{pdr_optimize}}
+#'
+#' @examples
+#' tm <- 0:5
+#' m <- c(10, 8, 6, 5, 4, 3)
+#' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
+#' m_prec <- 0.001
+#' ap_prec = 1
+#' # Optimize values for P (production) and k (consumption)
+#' pdr_optimize_tidy(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
+pdr_optimize_tidy <- function(...) {
+  x <- pdr_optimize(...)
+
+  # Return results as a 'tidy' data.frame
+  initials <- data.frame(as.list(x$initial_par))
+  row.names(initials) <- NULL
+  initials <- initials[rep(1, length(x$par)),]
+  colnames(initials) <- paste0("initial.", colnames(initials))
+
+  out1 <- data.frame(par = names(x$par),
+                    value = unname(x$par))
+  out2 <- data.frame(convergence = rep(x$convergence, nrow(out1)),
+                    message = rep(x$message, nrow(out1)))
+
+  cbind(out1, initials, out2)
 }
