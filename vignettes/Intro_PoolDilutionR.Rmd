@@ -267,11 +267,39 @@ Poor fits can result from a variety of issues, from instrument error, to incorre
 \
 
 ### Variable Fractionation  
-\
 
-### Known Production Rate  
-\
-  
+
+The most common goal in pool dilution experiments is to estimate production
+`P` and consumption `k`, but `PoolDilutionR` can be used to optimize
+any or all of four parameters: `P`, `k`, `frac_P` (the isotopic fractionation
+value of production), and `frac_k` (fractionation of consumption).
+
+For example, we can tell `pdr_optimize` that the production and consumption
+values are fixed (i.e., known) and ask it to optimize only the fractionation rates:
+
+```{r}
+pdr_optimize_tidy(time = OneSample_dat$time_days,
+                  m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, 
+                  n = OneSample_dat$cal13CH4ml,
+                  P = 1,
+                  k = 2,
+                  params_to_optimize = c("frac_P", "frac_k"),
+                  pool = "CH4",
+                  m_prec = 0.001,
+                  ap_prec = 1)
+```
+
+(As before, we are using `pdr_optimize_tidy` for tidy data frame output.)
+
+We can see that
+* the initial value of `P` was specified
+* the intial value of `k` was computed from the data, because we did not specify it
+* initial values for `frac_P` and `frac_k` were looked up from the package's `pdr_fractionation` table based on the pool (here, methane)
+* as requested, the optimizer only optimized `frac_P` and `frac_k`
+
+The help page for `pdr_optimize` provides other examples of this.
+
+
 ## Under the hood.  
     
   
