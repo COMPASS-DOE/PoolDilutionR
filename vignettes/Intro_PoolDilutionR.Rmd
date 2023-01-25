@@ -23,15 +23,8 @@ knitr::opts_chunk$set(
 
 Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue (molecules of the same chemical formula and bonding structure that differ only in their isotopic composition). After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations (Kirkham and Bartholomew 1954).  \
 
-
-```{r setup, include=FALSE}
-library(PoolDilutionR)
-library(dplyr)
+```{r}
 library(ggplot2)
-library(ggpmisc)
-library(tidyr)
-library(scales)
-library(kableExtra)
 
 theme_set(theme_minimal() + theme(text = element_text(size = 11)))
 ```
@@ -52,7 +45,9 @@ Data source, Morris et al, *in prep*.  \
 |    cal12CH4ml: mL's of 12C methane, calculated from incubation volume and sample ppm  
 |    cal13CH4ml: mL's of 13C methane, calculated from incubation volume and sample ppm  
 |    AP_obs: percent of methane that is 13C methane, 13C/(12C + 13C) * 100  
-```{r Input Data, message = FALSE}
+```{r setup}
+library(PoolDilutionR)
+
 Morris2023 %>%
   filter(id == "71") %>%
   select(-"id") %>%
@@ -292,7 +287,19 @@ Poor fits can result from a variety of issues, from instrument error, to incorre
 
 ## Under the hood.  
 ### Cost Function  
+
+$$E = (\sum_{t=1}^j\frac {AP_{obs}(t) - AP_{pred}(t)}{SD_{obs-AP}}) * N_{ap} + (\sum_{t=1}^j\frac {m_{obs}(t) - m_{pred}(t)}{SD_{obs-m}}) * N_{m}$$
 ### Prediction  
+
+Equation 9
+$$ n_t = n_0^{(-k\alpha t)}$$
+
+Equation 10
+#this is where we removed $AP_p$?
+$$ AP_t = \frac {n_t}{m_t} + AP_p $$
+
+Equation 11
+
 ### Fractionation  
   
 Fractionation describes the tendency of heavier isotopes and isotopologues to resist chemical transformation, whether these be phase changes, passive (term?) chemical reactions, or enzyme-mediated. There are two major types of fractionation. Equilibrium fractionation occurs when phase changes favor the heavier isotopologue staying a lower energy state (Urey 1947, Druhan, Winnick, and Thullner 2019). A typical example would be the relative enrichment of the ocean in heavy water $H_2^{18}O$ due to preferential evaporation of light water $H_2^{16}O$. The second major type of fractionation is kinetic, and is classically associated enzyme selectivity (citation). This is what drives the distinction in $^{13}C$ signatures between C3 and C4 plants (citation).  
