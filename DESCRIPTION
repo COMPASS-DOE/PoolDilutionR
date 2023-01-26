@@ -28,8 +28,9 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
+    ggplot2,
+    tibble
 Config/testthat/edition: 3
-Imports: ggplot2, tibble
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr
