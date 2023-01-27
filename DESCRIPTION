@@ -29,7 +29,8 @@ Suggests:
     knitr,
     rmarkdown,
     ggplot2,
-    tibble
+    tibble,
+    tidyr
 Config/testthat/edition: 3
 Depends: 
     R (>= 2.10)
