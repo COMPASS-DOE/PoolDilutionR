@@ -6,8 +6,8 @@
 \title{Example time series data from a methane dilution pool experiment.}
 \format{
 \describe{
-  \item{id}{Sample ID}
-  \item{time_days}{time in days between measurements, starting a 0}
+  \item{id}{Sample ID, a factor}
+  \item{time_days}{time in days between measurements, starting at 0}
   \item{cal12CH4ml}{ml of 12C-CH4 at each timestep}
   \item{cal13CH4ml}{ml of 13C-CH4 at each timestep}
   \item{AP_obs}{atom percent 13C-CH4 at each timestep}
