@@ -25,7 +25,7 @@ Pool dilution is an isotope tracer technique wherein a biogeochemical pool is ar
   
 ## PoolDilutionR (PDR)
 
-PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see Under the hood for more information.).  
+PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
 \
    
 ### Worked Example  
@@ -51,7 +51,7 @@ print(OneSample_dat)
   
 ### Solving for gross rates
 
-To solve for gross methane production and consumption for this sample, we call pdr_optimize(), which uses optim() to minimize the error in the observed vs predicted pool size and isotopic composition. Errors are weighted by a  combination of data quality and explanatory power (see cost_fuction()) and predictions are made using ap_prediction(). See Under the hood for more information.\
+To solve for gross methane production and consumption for this sample, we call pdr_optimize(), which uses optim() to minimize the error in the observed vs predicted pool size and isotopic composition. Errors are weighted by a  combination of data quality and explanatory power (*ie*., cost_fuction()) and predictions are made using ap_prediction(). See *Under the hood.* for more information.\
 \
 
 ```{r Solve for P and k}
@@ -82,7 +82,7 @@ pdr_optimize_tidy(time = OneSample_dat$time_days,
 From k, the gross consumption rate can be calculated for any pool size of interest.  
   
 
-## Variations with pdr_optimize()
+## Multi-sample Processing
   
 To demonstrate additional capabilities, we need to bring in additional sample data.  
   
@@ -125,9 +125,24 @@ print(input_data)
 ```
   
 Now we show a graphical summary of the results from running these samples through pdr_optimize() with the same arguments as shown for sample 71 above.  
+```{r lapply(PoolDilutionR)}
+samples <- split(Morris2023, Morris2023$id)
+#lapply(samples, pdr_optimize_tidy)
+all_results <- lapply(samples, FUN = function(samples) {
+   pdr_optimize_tidy(time = samples$time_days,
+                     m = samples$cal12CH4ml + samples$cal13CH4ml,
+                     n = samples$cal13CH4ml,
+                     P = 0.1,
+                     pool = "CH4",
+                     m_prec = 0.001,
+                     ap_prec = 1,
+                     include_progress = FALSE)}
+   )
+all_results <- do.call(rbind, all_results)
 
+```
 
-```{r Do the thing!, echo=FALSE, message = FALSE, results='hide'}
+```{r Six samples with all preds, echo=FALSE, message = FALSE, results='hide'}
 pk_results <- list()
 incdat_out <- list()
 all_predictions <- list()
@@ -224,13 +239,14 @@ all_predictions <- do.call(rbind, all_predictions)
  #     incdat_out
 ```
 
-### Visual Summary of Multisample Output
-  
+## Variations with pdr_optimize()  
+
 Here we see variation among six samples in the goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane). Grey lines represent values tested on the way to the final optimized fit.  
 \
 ```{r Future Note, include = FALSE, echo = FALSE}
 #For consideration, include link here to additional supplementary materials that include code for making the plots below
 ```
+
 ```{r Multisample Fit APE, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 # ----- Plot AP results -----
   ggplot(incdat_out, aes(time_days, AP_obs, color = as.factor(id))) +
@@ -288,7 +304,16 @@ values are fixed (i.e., known) and ask it to optimize only the fractionation rat
 
 Sample64_dat <- subset(Morris2023, subset = id == "64")
 
-pdr_optimize_tidy(time = Sample64_dat$time_days,
+original_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
+                  m = Sample64_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, 
+                  n = Sample64_dat$cal13CH4ml,
+                  params_to_optimize = c("P", "k"),
+                  P = 0.1,
+                  pool = "CH4",
+                  m_prec = 0.001,
+                  ap_prec = 1)
+
+new_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
                   m = Sample64_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, 
                   n = Sample64_dat$cal13CH4ml,
                   P = 6,
