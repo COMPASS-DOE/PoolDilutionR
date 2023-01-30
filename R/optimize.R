@@ -2,7 +2,7 @@
 #' Optimize production and consumption parameters for pool dilution data
 #'
 #' @param time Vector of numeric time values (e.g. days); first should be zero
-#' @param m Observed pool size (as a volume), same length as time
+#' @param m Observed total pool size (as a volume), same length as time
 #' @param n Observed heavy isotope (as a volume), same length as time
 #' @param m_prec Instrument precision for pool size, expressed as a standard deviation
 #' @param ap_prec Instrument precision for atom percent, expressed as a standard deviation
@@ -137,7 +137,7 @@ set_default_params <- function(other_params) {
   # If bounds not given, provide some so that the optimizer
   # isn't allowed to produce <0 values for P, nor <=0 for k
   if(is.null(other_params[["lower"]])) {
-    other_params[["lower"]] <- c("P" = 0.0, "k"= 0.0001, "frac_P" = 0, "frac_k" = 0)
+    other_params[["lower"]] <- c("P" = 0.0, "k"= 0.0001, "frac_P" = 0, "frac_k" = 0.0001)
   }
   if(is.null(other_params[["upper"]])) {
     other_params[["upper"]] <- c("P" = Inf, "k"= Inf, "frac_P" = 1, "frac_k" = 1)
@@ -199,7 +199,7 @@ pdr_estimate_k0 <- function(time, n, frac_k, quiet = FALSE) {
 #' m <- c(10, 8, 6, 5, 4, 3)
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 #' m_prec <- 0.001
-#' ap_prec = 1
+#' ap_prec = 0.1
 #' # Optimize values for P (production) and k (consumption)
 #' pdr_optimize_tidy(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
 pdr_optimize_tidy <- function(...) {

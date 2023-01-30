@@ -18,9 +18,9 @@ ap_prediction(
 \arguments{
 \item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
-\item{m0}{pool size at time zero, as a volume}
+\item{m0}{total pool size at time zero, as a volume}
 
-\item{n0}{amount of heavy isotope at time zero, as a volume}
+\item{n0}{pool size of heavy isotope at time zero, as a volume}
 
 \item{P}{production rate, unit gas/unit time}
 

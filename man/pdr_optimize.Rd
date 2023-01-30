@@ -26,7 +26,7 @@ pdr_optimize(
 \arguments{
 \item{time}{Vector of numeric time values (e.g. days); first should be zero}
 
-\item{m}{Observed pool size (as a volume), same length as time}
+\item{m}{Observed total pool size (as a volume), same length as time}
 
 \item{n}{Observed heavy isotope (as a volume), same length as time}
 
