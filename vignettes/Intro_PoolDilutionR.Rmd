@@ -21,108 +21,106 @@ knitr::opts_chunk$set(
 
 # What is Pool Dilution?
 
-Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue (molecules of the same chemical formula and bonding structure that differ only in their isotopic composition). After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations (Kirkham and Bartholomew 1954).  \
-  
-## PoolDilutionR (PDR)
+Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue (molecules of the same chemical formula and bonding structure that differ only in their isotopic composition). After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations [Kirkham and Bartholomew 1954](https://doi.org/10.2136/sssaj1954.03615995001800010009x).
+
+
+## PoolDilutionR
+
+`PoolDilutionR` uses equations originally published in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448), with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see Under the hood for more information.).
 
 PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
 \
+
    
 ### Worked Example  
 
-Below we isolate one sample's worth of data from PDR's internal dataset, source Morris et al, *in prep*.  
-\
+For this example we use one of the samples in the `Morris2023` dataset that comes with `PoolDilutionR`.
+It consists of data collected at five time points during a methane pool dilution experiment (see `?Morris2023`).
+
+**Key to columns**:
+
+* `time_days`	- time (in days) between samples 
+* `cal12CH4ml` - mL's of 12C methane, calculated from incubation volume and sample ppm  
+* `cal13CH4ml` - mL's of 13C methane, calculated from incubation volume and sample ppm  
+* `AP_obs` - percent of methane that is 13C methane, 13C/(12C + 13C) * 100
+
 ```{r setup}
 library(PoolDilutionR)
 
 OneSample_dat <- subset(Morris2023, subset = id == "71")
 print(OneSample_dat)
-
 ```
-  
-  **Key to columns**:
-
-|    id: sample id
-|    time_days: time (in days) between samples 
-|    cal12CH4ml: mL's of 12C methane, calculated from incubation volume and sample ppm  
-|    cal13CH4ml: mL's of 13C methane, calculated from incubation volume and sample ppm  
-|    AP_obs: percent of methane that is 13C methane, 13C/(12C + 13C) * 100  
-\
-  
+ 
 ### Solving for gross rates
 
+
+To solve for gross methane production and consumption for this sample, we call `pdr_optimize()`, which in turn uses R's `optim()` to minimize the error in the observed vs predicted pool size and isotopic composition. 
+Errors are weighted by a combination of data quality and explanatory power (see `cost_function()`) and predictions are made using the package function `ap_prediction()`. 
+See Under the hood for more information.
+=======
 To solve for gross methane production and consumption for this sample, we call pdr_optimize(), which uses optim() to minimize the error in the observed vs predicted pool size and isotopic composition. Errors are weighted by a  combination of data quality and explanatory power (*ie*., cost_fuction()) and predictions are made using ap_prediction(). See *Under the hood.* for more information.\
-\
+
 
 ```{r Solve for P and k}
-
-pdr_optimize(time = OneSample_dat$time_days, #time as a vector
-             m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, #total pool size
-             n = OneSample_dat$cal13CH4ml,#pool size of heavy isotopologue
-             P = 0.1, #inital production rate for optim()
-             pool = "CH4", #indicates use of default fractionation rates of methane
-             m_prec = 0.001, #instrument precision for total pool size, as standard deviation
-             ap_prec = 1, #instrument precision for atom percent, as standard deviation
-             include_progress = FALSE) #if all tested values are desired, change to TRUE
+pdr_optimize(time = OneSample_dat$time_days, # time as a vector
+             m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, # total pool size
+             n = OneSample_dat$cal13CH4ml,# pool size of heavy isotopologue
+             P = 0.1, # inital production rate for optim()
+             pool = "CH4", # indicates use of default fractionation rates of methane
+             m_prec = 0.001, # instrument precision for total pool size, as standard deviation
+             ap_prec = 1, # instrument precision for atom percent, as standard deviation
+)
 ```
-Default output shows optimized variables (here P and k), initial parameter values, as well as details of the bounds, convergence, and methods for optim(). This is a little unwieldy, so we also provide a clean version that generates a dataframe.\
-  
-### Clean Output
+
+Notice that `pdr_optimize` calculated or looked up three parameters that we didn't provide:
+`frac_P`, the fractionation rate of production; `frac_k`, the fractionation rate of
+consumption; and `k`, the consumption rate constant.
+The first two are taken from default values for methane as provided in the 
+package's `pdr_fractionation` dataset, while the latter is estimated from the data.
+
+`pdr_optimize` returns a list with the following entries:
+
+* `par` - the final optimized values of (in this case) production (`P`) and consumption (`k`), as calculated by `optim()`
+* `value`, `counts`, `convergence`, `message` - these are all returned by `optim()`
+* `initial_par` - the initial parameters used for the model
+* `initial_other` - other settings passed to `optim()`; these typically include parameter bounds and optimization method
+
+This list has a great deal of detail, but we can also get a summarized form in
+a convenient data frame output format:
+
 ```{r OneSample Results}
 pdr_optimize_tidy(time = OneSample_dat$time_days,
-             m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml,
-             n = OneSample_dat$cal13CH4ml,
-             P = 0.1,
-             pool = "CH4",
-             m_prec = 0.001,
-             ap_prec = 1,
-             include_progress = FALSE)
+                  m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml,
+                  n = OneSample_dat$cal13CH4ml,
+                  P = 0.1,
+                  pool = "CH4",
+                  m_prec = 0.001,
+                  ap_prec = 1)
 ```
 
-From k, the gross consumption rate can be calculated for any pool size of interest.  
-  
+From `k`, the gross consumption rate can be calculated for any pool size of interest.  
 
 ## Multi-sample Processing
   
-To demonstrate additional capabilities, we need to bring in additional sample data.  
+To demonstrate additional capabilities, we use the entire `Morris2023` dataset:  
   
-```{r Multi-sample Example Input, fig.height = 5, fig.width = 7, fig.align='center'}
-
-#create long data
-AP_obs <- subset(Morris2023,  select = c("id", "AP_obs", "time_days"))
-AP_obs$name <- "AP_obs"
-colnames(AP_obs)[colnames(AP_obs) == "AP_obs"] = "value"
-
-cal12CH4ml <- subset(Morris2023,  select = c("id", "cal12CH4ml", "time_days"))
-cal12CH4ml$name <- "cal12CH4ml"
-colnames(cal12CH4ml)[colnames(cal12CH4ml) == "cal12CH4ml"] = "value"
-
-cal13CH4ml <- subset(Morris2023,  select = c("id", "cal13CH4ml", "time_days"))
-cal13CH4ml$name <- "cal13CH4ml"
-colnames(cal13CH4ml)[colnames(cal13CH4ml) == "cal13CH4ml"] = "value"
-
-long_Morris2023 <- rbind(AP_obs, cal12CH4ml, cal13CH4ml)
+```{r Multi-sample Example Input, fig.height = 5, fig.width = 8, fig.align='center'}
+# create long data for plotting
+library(tidyr)
+long_Morris2023 <- pivot_longer(Morris2023, cols = cal12CH4ml:AP_obs)
 
 library(ggplot2)
-theme_set(theme_minimal() + theme(text = element_text(size = 11)))
-
-#create facet labels
-facet_labels <- c(
-    AP_obs = "Atom% Observed",
-    cal12CH4ml = "12C Methane (mL)",
-    cal13CH4ml = "13C Methane (mL)")  
-
 ggplot(data = long_Morris2023,
-       aes(time_days, value, group = as.factor(id),
-                             color = as.factor(id))) +
-    scale_color_discrete("Sample ID") +
-    geom_point() + geom_line() + ylab("") + xlab("\n Timestep (d)") +
-    ggtitle("Example Input Data") +
-    facet_wrap(~name, scales = "free_y",
-                labeller = labeller(name = facet_labels)) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 0.75)) -> input_data
-print(input_data)
+       aes(time_days, value, color = id)) +
+  geom_point() + geom_line() +
+  facet_wrap(~name, scales = "free_y")
 ```
+
+
+### Visual Summary of Multisample Output
+
+Now we show a graphical summary of the results from running these samples through `pdr_optimize()` with the same arguments as shown for single sample above.  
+
   
 Now we show a graphical summary of the results from running these samples through pdr_optimize() with the same arguments as shown for sample 71 above.  
 ```{r lapply(PoolDilutionR)}
@@ -141,6 +139,7 @@ all_results <- lapply(samples, FUN = function(samples) {
 all_results <- do.call(rbind, all_results)
 
 ```
+
 
 ```{r Six samples with all preds, echo=FALSE, message = FALSE, results='hide'}
 pk_results <- list()
@@ -208,10 +207,9 @@ result <- pdr_optimize(time = dat$time_days,
     total_methane <- dat$cal12CH4ml + dat$cal13CH4ml
     change_methane <- c(0, diff(total_methane))
     change_time <- c(0, diff(dat$time_days))
-    dat$Pt <- P * change_time #P is ml/day
-    #amount of methane produced at time (t) of this incubation, a volume in mL
+    dat$Pt <- P * change_time # P is ml/day
+    # amount of methane produced at time (t) of this incubation, a volume in mL
     dat$Ct <- dat$Pt - change_methane
-    #amount of methane consumed at time (t) of this incubation, a volume in mL
 
     incdat_out[[i]] <- dat
 }
@@ -219,37 +217,19 @@ result <- pdr_optimize(time = dat$time_days,
 pk_results <- do.call(rbind, pk_results)
 incdat_out <- do.call(rbind, incdat_out)
 all_predictions <- do.call(rbind, all_predictions)
- 
-#Don't think we need these anymore
- # incdat_out %>%
- #     # compute correlation between predictions and observations
- #     group_by(id) %>%
- #     #mutate(id == as.character(id)) %>%
- #     summarise(m_cor = cor(cal12CH4ml + cal13CH4ml, mt),
- #               ap_cor = cor(AP_obs, AP_pred)) ->
- #     performance_summary
- # 
- # performance_summary %>%
- #     right_join(pk_results, by = "id") ->
- #     pk_results
- # print(pk_results)
- # 
- # pk_results %>%
- #     right_join(incdat_out, by = "id") ->
- #     incdat_out
 ```
+
 
 ## Variations with pdr_optimize()  
 
 Here we see variation among six samples in the goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane). Grey lines represent values tested on the way to the final optimized fit.  
-\
 ```{r Future Note, include = FALSE, echo = FALSE}
 #For consideration, include link here to additional supplementary materials that include code for making the plots below
 ```
 
 ```{r Multisample Fit APE, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 # ----- Plot AP results -----
-  ggplot(incdat_out, aes(time_days, AP_obs, color = as.factor(id))) +
+ggplot(incdat_out, aes(time_days, AP_obs, color = id)) +
   geom_point(aes(shape = ""), size = 4) +
   geom_line(data = all_predictions,
             aes(time, AP_pred, group = paste(id, P, k)), color = "grey", linetype = 2) +
@@ -264,12 +244,11 @@ Here we see variation among six samples in the goodness of fit for final optimiz
   xlab("\n Timestep \n") + ylab("\n (13C-CH4/Total CH4) x 100 \n") +
   ggtitle("\n Atom% 13C \n") + theme(legend.position = "bottom")
 ```
-  
-  Pool size predictions (total methane below) are consistently tight to observations, whereas signature fits (atom%13C) have more variation.  
-  
-```{r Multisample Fit Total Pool, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 
-ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = as.factor(id))) +
+Pool size is predictions are consistently tight to observations, whereas signature fits have more variation.
+
+```{r Multisample Fit Total Pool, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
+ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
   geom_point(aes(shape = ""), size = 4) +
   geom_line(data = all_predictions,
             aes(time, mt, group = paste(id, P, k)), color = "grey", linetype = 2) +
@@ -284,9 +263,10 @@ ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = as.factor(id)
   xlab("\n Timestep \n") + ylab("\n Volume (mL) \n") +
   ggtitle("\n Total Methane \n") + theme(legend.position = "bottom")
 ```
-\
-Poor fits can result from a variety of issues, from instrument error, to incorrect assumptions regarding fractionation rates. 
-\
+
+Poor fits can result from a variety of issues, including instrument error and incorrect assumptions regarding fractionation rates. 
+To help address the latter, `pdr_optimize()` allows users to choose up to four parameters (`P`, `k`, fractionation of P `frac_p`, fractionation of k `frac_k`) that `pdr_optimize()` will vary for optimizing model fit. 
+Caution should be used in parameter selection, based on prior knowledge of the biological system.
 
 ### Variable Fractionation  
 
@@ -299,7 +279,6 @@ For example, we can tell `pdr_optimize` that the production and consumption
 values are fixed (i.e., known) and ask it to optimize only the fractionation rates:
 
 ```{r}
-
 # Sample 64 above has poor fit for atom%13C
 
 Sample64_dat <- subset(Morris2023, subset = id == "64")
@@ -334,6 +313,7 @@ new_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
 (As before, we are using `pdr_optimize_tidy` for tidy data frame output.)
 
 We can see that
+
 * the initial value of `P` was specified
 * the intial value of `k` was computed from the data, because we did not specify it
 * initial values for `frac_P` and `frac_k` were looked up from the package's `pdr_fractionation` table based on the pool (here, methane)
