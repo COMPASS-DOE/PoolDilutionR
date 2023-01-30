@@ -26,9 +26,7 @@ Pool dilution is an isotope tracer technique wherein a biogeochemical pool is ar
 
 ## PoolDilutionR
 
-`PoolDilutionR` uses equations originally published in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448), with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see Under the hood for more information.).
-
-PDR uses equations originally published in von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
+`PoolDilutionR` uses equations originally published in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448), with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
 \
 
    
@@ -55,10 +53,7 @@ print(OneSample_dat)
 
 
 To solve for gross methane production and consumption for this sample, we call `pdr_optimize()`, which in turn uses R's `optim()` to minimize the error in the observed vs predicted pool size and isotopic composition. 
-Errors are weighted by a combination of data quality and explanatory power (see `cost_function()`) and predictions are made using the package function `ap_prediction()`. 
-See Under the hood for more information.
-=======
-To solve for gross methane production and consumption for this sample, we call pdr_optimize(), which uses optim() to minimize the error in the observed vs predicted pool size and isotopic composition. Errors are weighted by a  combination of data quality and explanatory power (*ie*., cost_fuction()) and predictions are made using ap_prediction(). See *Under the hood.* for more information.\
+Errors are weighted by a  combination of data quality and explanatory power (*ie*., `cost_fuction()`) and predictions are made using `ap_prediction()`. See *Under the hood.* for more information.\
 
 
 ```{r Solve for P and k}
@@ -74,9 +69,9 @@ pdr_optimize(time = OneSample_dat$time_days, # time as a vector
 
 Notice that `pdr_optimize` calculated or looked up three parameters that we didn't provide:
 `frac_P`, the fractionation rate of production; `frac_k`, the fractionation rate of
-consumption; and `k`, the consumption rate constant.
+consumption; and `k0`, the initial value for the first order rate constant for consumption.
 The first two are taken from default values for methane as provided in the 
-package's `pdr_fractionation` dataset, while the latter is estimated from the data.
+package's `pdr_fractionation` dataset, while the latter is estimated from the data, using the slope of the pool size of heavy isotope over time (`n_slope = -11.635`).
 
 `pdr_optimize` returns a list with the following entries:
 
@@ -120,9 +115,7 @@ ggplot(data = long_Morris2023,
 ### Visual Summary of Multisample Output
 
 Now we show a graphical summary of the results from running these samples through `pdr_optimize()` with the same arguments as shown for single sample above.  
-
-  
-Now we show a graphical summary of the results from running these samples through pdr_optimize() with the same arguments as shown for sample 71 above.  
+ 
 ```{r lapply(PoolDilutionR)}
 samples <- split(Morris2023, Morris2023$id)
 #lapply(samples, pdr_optimize_tidy)
@@ -223,6 +216,7 @@ all_predictions <- do.call(rbind, all_predictions)
 ## Variations with pdr_optimize()  
 
 Here we see variation among six samples in the goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane). Grey lines represent values tested on the way to the final optimized fit.  
+\
 ```{r Future Note, include = FALSE, echo = FALSE}
 #For consideration, include link here to additional supplementary materials that include code for making the plots below
 ```
@@ -244,9 +238,9 @@ ggplot(incdat_out, aes(time_days, AP_obs, color = id)) +
   xlab("\n Timestep \n") + ylab("\n (13C-CH4/Total CH4) x 100 \n") +
   ggtitle("\n Atom% 13C \n") + theme(legend.position = "bottom")
 ```
-
-Pool size is predictions are consistently tight to observations, whereas signature fits have more variation.
-
+\
+Pool size is predictions are consistently tight to observations, whereas signature fits have more variation.  
+\
 ```{r Multisample Fit Total Pool, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
   geom_point(aes(shape = ""), size = 4) +
@@ -263,19 +257,15 @@ ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
   xlab("\n Timestep \n") + ylab("\n Volume (mL) \n") +
   ggtitle("\n Total Methane \n") + theme(legend.position = "bottom")
 ```
-
+\
 Poor fits can result from a variety of issues, including instrument error and incorrect assumptions regarding fractionation rates. 
 To help address the latter, `pdr_optimize()` allows users to choose up to four parameters (`P`, `k`, fractionation of P `frac_p`, fractionation of k `frac_k`) that `pdr_optimize()` will vary for optimizing model fit. 
-Caution should be used in parameter selection, based on prior knowledge of the biological system.
+Caution should be used in parameter selection, based on prior knowledge of the biological system.  
+\
 
 ### Variable Fractionation  
 
-The most common goal in pool dilution experiments is to estimate production
-`P` and consumption `k`, but `PoolDilutionR` can be used to optimize
-any or all of four parameters: `P`, `k`, `frac_P` (the isotopic fractionation
-value of production), and `frac_k` (fractionation of consumption). Caution should be used in parameter selection, based on prior knowledge of the biological system.  
-
-For example, we can tell `pdr_optimize` that the production and consumption
+Here we tell `pdr_optimize` that the production and consumption
 values are fixed (i.e., known) and ask it to optimize only the fractionation rates:
 
 ```{r}
