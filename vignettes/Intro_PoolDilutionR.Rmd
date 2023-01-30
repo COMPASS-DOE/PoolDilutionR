@@ -274,7 +274,7 @@ values are fixed (i.e., known) and ask it to optimize only the fractionation rat
 Sample64_dat <- subset(Morris2023, subset = id == "64")
 
 original_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
-                  m = Sample64_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, 
+                  m = Sample64_dat$cal12CH4ml + Sample64_dat$cal13CH4ml, 
                   n = Sample64_dat$cal13CH4ml,
                   params_to_optimize = c("P", "k"),
                   P = 0.1,
@@ -283,21 +283,45 @@ original_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
                   ap_prec = 1)
 
 new_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
-                  m = Sample64_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, 
+                  m = Sample64_dat$cal12CH4ml + Sample64_dat$cal13CH4ml, 
                   n = Sample64_dat$cal13CH4ml,
-                  P = 6,
-                  k = 36,
+                  P = 0.0,
+                  k = 7.575,
                   params_to_optimize = c("frac_P", "frac_k"),
                   pool = "CH4",
                   m_prec = 0.001,
                   ap_prec = 1)
 
-####
-####
-#Start here
-####
-####
-#Now graph new AP and pool fit
+#dataframe with original fit (optimizing P and k)
+y_og <- ap_prediction(time = Sample64_dat$time_days,
+                          m0 = Sample64_dat$cal12CH4ml[1] + Sample64_dat$cal13CH4ml[1],
+                          n0 = Sample64_dat$cal13CH4ml[1],
+                          P = 0.0,
+                          k = 7.55,
+                          pool = "CH4")
+dat_og <- cbind(Sample64_dat, y_og)
+dat_og$fit <- "Original"
+
+#dataframe with new fit (optimizing P_frac and k_frac)
+y_new <- ap_prediction(time = Sample64_dat$time_days,
+                          m0 = Sample64_dat$cal12CH4ml[1] + Sample64_dat$cal13CH4ml[1],
+                          n0 = Sample64_dat$cal13CH4ml[1],
+                          P = 0.0,
+                          k = 7.55,
+                          frac_P = 0.01,
+                          frac_k = 1.00
+                          )
+dat_new <- cbind(Sample64_dat, y_new)
+dat_new$fit <- "New"
+
+comparison <- rbind(dat_new, dat_og)
+#long_comparison <- pivot_longer(Morris2023, cols = cal12CH4ml:AP_obs)
+
+#graph two fits
+ggplot(data = comparison) +
+  geom_point(aes(time_days, (nt/(mt+nt))), color = "red") +
+  geom_point(aes(time_days, (cal13CH4ml/(cal12CH4ml+cal13CH4ml))), color = "blue") +
+  facet_grid(.~fit)
 ```
 
 (As before, we are using `pdr_optimize_tidy` for tidy data frame output.)
