@@ -53,7 +53,9 @@ cost_function <- function(params, # values are set by optim()
   ap_weight = sd((n / (n + m)) * 100) / ap_prec # Normalization factor for isotopic signature, see Eq. 13
 
   # von Fischer and Hedin (2002) equation 14
-  cost <- sum((abs(m - pred$mt) / sd(m)) * pool_weight + (abs(n - pred$nt) / sd(n)) * ap_weight)
+  cost <- (sum(abs(m - pred$mt) / sd(m))) * pool_weight +
+          (sum(abs((n/(n+m))*100 - (pred$nt/(pred$nt+pred$mt))*100)) / sd((n/(n+m))*100)
+           * ap_weight)
   # Log progress and return to optimizer
   if(!is.null(log_progress)) {
     log_progress(data.frame(P = P, k = k, frac_P = frac_P, frac_k = frac_k, cost = cost))

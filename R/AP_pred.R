@@ -28,7 +28,7 @@ ap_prediction <- function(time, m0, n0, P, k,
 
   kfrac <- k * frac_k
   pfrac <- P * frac_P
-  nt <- pfrac / kfrac - (pfrac / kfrac - n0) * exp(-kfrac * time)
+  nt <- n0 * exp(-kfrac * time)
   # Equation 5 (and denominator in Eq. 11 of von Fischer and Hedin 2002):
   mt <- P / k - (P / k - m0) * exp(-k * time)
   ap <- nt / mt * 100
