@@ -48,16 +48,15 @@ cost_function <- function(params, # values are set by optim()
                         k = k,
                         frac_P = frac_P,
                         frac_k = frac_k)
-  ap <- (n/(n+m))*100
 
-  pool_weight = sd(m) / m_prec # Normalization factor for pool size, see Eq. 12
-  ap_weight = sd(ap) / ap_prec # Normalization factor for isotopic signature, see Eq. 13
-
-
+  ap_obs <- (n / (n + m)) * 100
+  pool_weight <- sd(m) / m_prec # Normalization factor for pool size, see Eq. 12
+  ap_weight <- sd(ap_obs) / ap_prec # Normalization factor for isotopic signature, see Eq. 13
 
   # von Fischer and Hedin (2002) equation 14
-  cost <- sum((abs(m - pred$mt) / sd(m))) * pool_weight +
-          sum((abs(ap - ((pred$nt/(pred$nt + pred$mt))*100)) / sd(ap))) * ap_weight
+  cost <- sum(abs(ap_obs - pred$AP_pred) / sd(ap_obs)) * ap_weight +
+    sum(abs(m - pred$mt) / sd(m)) * pool_weight
+
   # Log progress and return to optimizer
   if(!is.null(log_progress)) {
     log_progress(data.frame(P = P, k = k, frac_P = frac_P, frac_k = frac_k, cost = cost))
