@@ -30,7 +30,7 @@ Pool dilution is an isotope tracer technique wherein a biogeochemical pool is ar
 \
 
    
-### Worked Example  
+### Example Data  
 
 For this example we use one of the samples in the `Morris2023` dataset that comes with `PoolDilutionR`.
 It consists of data collected at five time points during a methane pool dilution experiment (see `?Morris2023`).
@@ -38,9 +38,9 @@ It consists of data collected at five time points during a methane pool dilution
 **Key to columns**:
 
 * `time_days`	- time (in days) between samples 
-* `cal12CH4ml` - mL's of 12C methane, calculated from incubation volume and sample ppm  
-* `cal13CH4ml` - mL's of 13C methane, calculated from incubation volume and sample ppm  
-* `AP_obs` - percent of methane that is 13C methane, 13C/(12C + 13C) * 100
+* `cal12CH4ml` - mL's of $^{12}C$-methane, calculated from incubation volume and sample ppm  
+* `cal13CH4ml` - mL's of $^{13}C$-methane, calculated from incubation volume and sample ppm  
+* `AP_obs` - percent of methane that is $^{13}C$-methane, $\frac{^{13}C}{(^{12}C+^{13}C)} * 100$
 
 ```{r setup}
 library(PoolDilutionR)
@@ -61,25 +61,26 @@ pdr_optimize(time = OneSample_dat$time_days, # time as a vector
              m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, # total pool size
              n = OneSample_dat$cal13CH4ml,# pool size of heavy isotopologue
              P = 0.1, # inital production rate for optim()
-             pool = "CH4", # indicates use of default fractionation rates of methane
+             pool = "CH4", # indicates use of default fractionation constants for methane
              m_prec = 0.001, # instrument precision for total pool size, as standard deviation
              ap_prec = 0.01, # instrument precision for atom percent, as standard deviation
 )
 ```
 
 Notice that `pdr_optimize` calculated or looked up three parameters that we didn't provide:
-`frac_P`, the fractionation rate of production; `frac_k`, the fractionation rate of
-consumption; and `k0`, the initial value for the first order rate constant for consumption.
+`frac_P`, the fractionation constant for production; `frac_k`, the fractionation constant for consumption; and `k0`, the initial value for the first order rate constant of consumption.
 The first two are taken from default values for methane as provided in the 
-package's `pdr_fractionation` dataset, while the latter is estimated from the data, using the slope of the pool size of heavy isotope over time (`n_slope = -11.635`).
+package's `pdr_fractionation` dataset, while the latter is estimated from the data, using the slope of the pool size of heavy isotope over time (`n_slope`).
 
 `pdr_optimize` returns a list with the following entries:
 
-* `par` - the final optimized values of (in this case) production (`P`) and consumption (`k`), as calculated by `optim()`
+* `par` - the final optimized values of (in this case) production (`P`) and the first order rate constant of consumption (`k`)*, as calculated by `optim()`
 * `value`, `counts`, `convergence`, `message` - these are all returned by `optim()`
 * `initial_par` - the initial parameters used for the model
 * `initial_other` - other settings passed to `optim()`; these typically include parameter bounds and optimization method
 
+*From `k`, the gross consumption rate can be calculated for any pool size of interest.  
+  
 This list has a great deal of detail, but we can also get a summarized form in
 a convenient data frame output format:
 
@@ -93,7 +94,7 @@ pdr_optimize_tidy(time = OneSample_dat$time_days,
                   ap_prec = 0.01)
 ```
 
-From `k`, the gross consumption rate can be calculated for any pool size of interest.  
+
 
 ## Multi-sample Processing
   
@@ -114,7 +115,7 @@ ggplot(data = long_Morris2023,
 
 ### Visual Summary of Multisample Output
 
-Now we show a graphical summary of the results from running these samples through `pdr_optimize()` with the same arguments as shown for single sample above.  
+Now we show a graphical summary of the results from running these samples through `pdr_optimize()` with the same arguments as shown for a single sample above.  
  
 ```{r lapply(PoolDilutionR), message = FALSE}
 samples <- split(Morris2023, Morris2023$id)
@@ -213,9 +214,8 @@ all_predictions <- do.call(rbind, all_predictions)
 ```
 
 
-## Variations with pdr_optimize()  
 
-Here we see the relative goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane) for six samples. Grey lines represent values tested on the way to the final optimized fit.  
+Below you can see the relative goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane) for six samples. Grey lines represent values tested on the way to the final optimized fit.  
 \
 ```{r Future Note, include = FALSE, echo = FALSE}
 #For consideration, include link here to additional supplementary materials that include code for making the plots below
@@ -238,9 +238,9 @@ ggplot(incdat_out, aes(time_days, AP_obs, color = id)) +
   xlab("\n Timestep \n") + ylab("\n (13C-CH4/Total CH4) x 100 \n") +
   ggtitle("\n Atom% 13C \n") + theme(legend.position = "bottom")
 ```
-\
-Pool size is predictions are consistently tight to observations, whereas signature fits have more variation.  
-\
+  
+Pool size predictions are consistently tight to observations, whereas signature fits have more variation.  
+  
 ```{r Multisample Fit Total Pool, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
   geom_point(aes(shape = ""), size = 4) +
@@ -257,16 +257,19 @@ ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
   xlab("\n Timestep \n") + ylab("\n Volume (mL) \n") +
   ggtitle("\n Total Methane \n") + theme(legend.position = "bottom")
 ```
-\
-Poor fits can result from a variety of issues, including instrument error and incorrect assumptions regarding fractionation rates. 
+  
+Poor fits can result from a variety of issues, including instrument error, low precision, and incorrect assumptions regarding fractionation. 
 To help address the latter, `pdr_optimize()` allows users to choose up to four parameters (`P`, `k`, fractionation of P `frac_p`, fractionation of k `frac_k`) that `pdr_optimize()` will vary for optimizing model fit. 
 Caution should be used in parameter selection, based on prior knowledge of the biological system.  
 \
 
-### Variable Fractionation  
+
+## Variations with pdr_optimize()  
+  
+### Optimization of Fractionation  
 
 Here we tell `pdr_optimize` that the production and consumption
-values are fixed (i.e., known) and ask it to optimize only the fractionation rates:
+values are known (and therefore fixed) and ask it to optimize only the fractionation rates:
 
 ```{r Optimize frac rates, fig.height = 4, fig.width = 6}
 # In this example, we assume that P and k are known, but that fractionation rates are unknown.
@@ -327,59 +330,97 @@ The help page for `pdr_optimize` provides other examples of this.
 ### Prediction  
 
 The equations in `ap_pred()` come from the following equations in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448). 
+\
+\
+**Equation 5** describes the change in pool size over time in terms of $P$, gross production, and $k$, the first order rate constant of consumption.  
   
-**Equation 9**; which tracks the change in the heavy isotopologue over time in terms of consumption and it's fractionation constants.  
-  
-$$ n_t = n_0^{(-k\alpha t)}$$  
+  $$m_t = \frac{P}{k} - (\frac{P}{k} - m_0) * e^{(-kt)}$$\
+  \
+  Where:\
+  $m_t$ is the total pool size at time *t*.\
+  $m_0$ is the total pool size at time zero.\
+\
+\
+**Equation 9** tracks the change in the heavy isotopologue over time in terms of consumption and its fractionation constant.  
+\
+$$ n_t = n_0 * e^{(-k\alpha t)}$$  
 
-  where:
+  Where:\
   
   $n_t$ is the pool size of the heavy isotopologue at time *t*.  
   $n_0$ is the pool size of the heavy isotopologue at time zero. 
-  $k$ is the first order rate constant of consumption.  
-  $t$ is time.  
-  
-and    
+\
+\
+And:\
 $$
 \alpha = \frac{k_{(\,^{13}C)\,}}{k_{(\,^{12}C)\,}}
 $$
-  \
+\
 Where:\
-$k_{(\,^{13}C)\,}$ is the first-order rate constant for consumption of 13CH4\
-and\
-$k_{(\,^{12}C)\,}$ is the first-order rate constant for consumption of 12CH4\
+$k_{(\,^{13}C)\,}$ is the first-order rate constant for consumption of $^{13}CH_4$\
+$k_{(\,^{12}C)\,}$ is the first-order rate constant for consumption of $^{12}CH_4$.\
 \
 \
-We expand this equation to allow for the production of heavy molecules from authocthonous sources.  
-  
+In `PoolDilutionR`, we expand this equation to allow for the production of heavy molecules from authocthonous sources.  
+\
+\
+**Equation 9, adjusted**  
   $$n_t = \frac{p_{frac}}{k_{frac}} - ( \frac{p_{frac}}{k_{frac}} - 0) * e^{-k_{frac}t}$$
-
   
-Equation 10; which gives the atom percent content to the pool for each time step in terms of gross rates and their fractionation constants.  
+  Where $k_{frac}$ is equivalent to $\alpha$ above, for whatever heavy isotope is applicable.\
+\
+\
+The isotopic composition of the pool over time is described in **Equation 10**.  
   
   
 $$ AP_t = \frac {n_t}{m_t} + AP_p $$
   
-  where:  
-  
-  $AP_t$ is the predicted atom percent composition of the pool at time $t$.    
-  $n_t$ is the pool size of the heavy isotopologue at time *t*, as above.  
-  $m_t$ is the total pool size at time *t*.  
-  
-Equations 9 and 10 are combined in Equation 11;  
+
+Which we can now simplify to:  
+\
+**Equation 10, adjusted**
+$$AP_t = (\frac{n_t}{m_t}) * 100$$
+
+Due to production of heavy isotopologue now being accounted for in our adjusted Equation 9.  
+\
+\
+Combined this looks like:  
   
 $$
-AP_t = \frac{n_0^{-k\alpha t}}{\frac{P}{k}-(\,\frac{P}{k}-m_0)^{-kt}\,}
+AP_t = \left( \frac{\frac{p_{frac}}{k_{frac}} - ( \frac{p_{frac}}{k_{frac}} - 0) * e^{-k_{frac}t}}
+            {\frac{P}{k} - (\frac{P}{k} - m_0) * e^{(-kt)}} \right) * 100
 $$
 
 ### Cost Function  
+  
+  The `cost_function()` provides feedback to `ap_pred()` on the quality of each iteration of fitted rates and/or fractionation constants. The sum of errors are weighted by the standard deviation of the observations, as well as a scaling factor, ($N$).  
+\
+\
+  **Equation 14**:
 
-$$E = \left(\sum_{t=1}^j\frac {AP_{obs}(t) - AP_{pred}(t)}{SD_{obs-AP}}\right) * N_{ap} + \left(\sum_{t=1}^j\frac {m_{obs}(t) - m_{pred}(t)}{SD_{obs-m}}\right) * N_{m}$$
+$$E = \left(\sum_{t=1}^j\frac {AP_{obs}(t) - AP_{pred}(t)}{SD_{obs-AP}}\right) * N_{ap} + \left(\sum_{t=1}^j\frac {m_{obs}(t) - m_{pred}(t)}{SD_{obs-m}}\right) * N_{m}$$  
+  
+  Where:\
+\
+  $SD_{obs-AP}$ is the standard deviation among all observations of atom percent for a single sample  
+  $SD_{obs-m}$ is the standard deviation among all observations of total pool size for a single sample  
+\
+  And:  
+  
+  $$N_x = \frac{SD_{x_{observed}}}{SD_{x_{precision}}}$$  
+  Where:  
+\
+\
+  $x$ is either atom percent ($ap$) or total pool size ($m$)  
+  $SD_{x_{precision}}$ is the instrument precision for that variable as standard deviation (*ie.*, standard precision)  
+\
+\
+Users have the ability to replace the default `cost_function()` with their own, if desired.  
   
 ### Fractionation  
   
 Fractionation describes the tendency of heavier isotopes and isotopologues to resist chemical transformation, whether these be phase changes, passive (term?) chemical reactions, or enzyme-mediated. There are two major types of fractionation. Equilibrium fractionation occurs when phase changes favor the heavier isotopologue staying a lower energy state (Urey 1947, Druhan, Winnick, and Thullner 2019). A typical example would be the relative enrichment of the ocean in heavy water $H_2^{18}O$ due to preferential evaporation of light water $H_2^{16}O$. The second major type of fractionation is kinetic, and is classically associated enzyme selectivity (citation). This is what drives the distinction in $^{13}C$ signatures between C3 and C4 plants (citation).  
 
-While our knowledge of enzyme diversity is rapidly expanding...
+While our knowledge of enzyme diversity is rapidly expanding and additional fractionation rates will be added to `pdr_fraction` as part of future package versions.
 
 ## Literature
