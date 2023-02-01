@@ -421,7 +421,6 @@ Users have the ability to replace the default `cost_function()` with their own, 
   
 ### Fractionation  
 \
-\
 Fractionation describes the tendency of heavier isotopes and isotopologues to resist chemical transformation, whether these be phase changes or chemical reactions, whether spontaneous or enzyme-mediated. There are two major types of fractionation. Equilibrium fractionation occurs when phase changes favor the heavier isotopologue staying a lower energy state ([Druhan, Winnick, and Thullner 2019](https://doi.org/10.2138/rmg.2019.85.8), [Urey 1947](https://doi.org/10.1039/JR9470000562)). A typical example would be the relative enrichment of the ocean in heavy water $H_2^{18}O$ due to preferential evaporation of light water $H_2^{16}O$. The second major type of fractionation is kinetic, and is classically associated enzyme selectivity. This is what drives the distinction in $^{13}C$ signatures between C3 and C4 plants ([O'Leary 1981](https://doi.org/10.1016/0031-9422(81)85134-5)).  
 
 Because our knowledge of earth system processes and enzyme diversity is rapidly expanding, additional fractionation constants will be added to `pdr_fraction` as part of future package versions.
