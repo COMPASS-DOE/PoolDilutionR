@@ -306,6 +306,8 @@ ggplot(data = dat_new) +
                      breaks = c("Predictions", "Observations"),
                      values = c("Predictions" = "red", "Observations" = "blue")) +
   ylab("Atom%13C\n")
+
+print(new_fit)
 ```
 
 (As before, we are using `pdr_optimize_tidy` for tidy data frame output.)

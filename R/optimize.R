@@ -31,13 +31,14 @@
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 #' m_prec <- 0.001
 #' ap_prec <- 1
-#' # Optimize values for P (production) and k (consumption)
+#'
+#' # Optimize values for P (production) and k (consumption), provide starting values for P and k
 #' pdr_optimize(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
 #' # If we don't provide a value for k, it can be estimated from the data
 #' pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5)
-#' # Hold k and frac_k constant, optimize P and frac_P
+#' # Hold k and frac_k constant (ie., k = estimated k0, frac_k = default value), optimize P and frac_P
 #' pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, params_to_optimize = c("P", "frac_P"))
-#' # Optimize only k
+#' # Optimize only k (provide P and exclude from params_to_optimize)
 #' pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, params_to_optimize = "k")
 #' # Optimize only k, bounding its possible values
 #' op <- list(lower = c("k" = 0.2), upper = c("k" = 0.3))
