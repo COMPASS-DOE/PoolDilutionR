@@ -215,7 +215,7 @@ all_predictions <- do.call(rbind, all_predictions)
 
 ## Variations with pdr_optimize()  
 
-Here we see variation among six samples in the goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane). Grey lines represent values tested on the way to the final optimized fit.  
+Here we see the relative goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane) for six samples. Grey lines represent values tested on the way to the final optimized fit.  
 \
 ```{r Future Note, include = FALSE, echo = FALSE}
 #For consideration, include link here to additional supplementary materials that include code for making the plots below
@@ -234,7 +234,7 @@ ggplot(incdat_out, aes(time_days, AP_obs, color = id)) +
   scale_shape_manual(name = "Observations",
                      values = 20) +
   scale_color_discrete(guide = "none") +
-  facet_wrap(~as.numeric(id), scales = "free") +
+  facet_wrap(~id, scales = "free") +
   xlab("\n Timestep \n") + ylab("\n (13C-CH4/Total CH4) x 100 \n") +
   ggtitle("\n Atom% 13C \n") + theme(legend.position = "bottom")
 ```
@@ -253,7 +253,7 @@ ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
   scale_shape_manual(name = "Observations",
                      values = 20) +
   scale_color_discrete(guide = "none") +
-  facet_wrap(~as.numeric(id), scales = "free") +
+  facet_wrap(~id, scales = "free") +
   xlab("\n Timestep \n") + ylab("\n Volume (mL) \n") +
   ggtitle("\n Total Methane \n") + theme(legend.position = "bottom")
 ```
@@ -268,28 +268,16 @@ Caution should be used in parameter selection, based on prior knowledge of the b
 Here we tell `pdr_optimize` that the production and consumption
 values are fixed (i.e., known) and ask it to optimize only the fractionation rates:
 
-```{r}
-# Sample 64 above has poor fit for atom%13C
+```{r Optimize frac rates}
+# In this example, we assume that P and k are known, but that fractionation rates are unknown.
 
 Sample64_dat <- subset(Morris2023, subset = id == "64")
-
-original_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
-                  m = Sample64_dat$cal12CH4ml + Sample64_dat$cal13CH4ml, 
-                  n = Sample64_dat$cal13CH4ml,
-                  params_to_optimize = c("P", "k"),
-                  P = 0.1,
-                  pool = "CH4",
-                  m_prec = 0.001,
-                  ap_prec = 0.01)
-
-orgFitP <- original_fit[original_fit$par == "P",]$value
-orgFitk <- original_fit[original_fit$par == "k",]$value
 
 new_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
                   m = Sample64_dat$cal12CH4ml + Sample64_dat$cal13CH4ml, 
                   n = Sample64_dat$cal13CH4ml,
-                  P = orgFitP,
-                  k = orgFitk,
+                  P = 8,
+                  k = 1,
                   params_to_optimize = c("frac_P", "frac_k"),
                   m_prec = 0.001,
                   ap_prec = 0.01)
@@ -297,52 +285,40 @@ new_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
 newFitFracP <- new_fit[new_fit$par == "frac_P",]$value
 newFitFrack <- new_fit[new_fit$par == "frac_k",]$value
 
-#dataframe with original fit (optimizing P and k)
-y_og <- ap_prediction(time = Sample64_dat$time_days,
-                          m0 = Sample64_dat$cal12CH4ml[1] + Sample64_dat$cal13CH4ml[1],
-                          n0 = Sample64_dat$cal13CH4ml[1],
-                          P = orgFitP,
-                          k = orgFitk,
-                          pool = "CH4")
-dat_og <- cbind(Sample64_dat, y_og)
-dat_og$fit <- "Original"
-
 #dataframe with new fit (optimizing P_frac and k_frac)
 y_new <- ap_prediction(time = Sample64_dat$time_days,
                           m0 = Sample64_dat$cal12CH4ml[1] + Sample64_dat$cal13CH4ml[1],
                           n0 = Sample64_dat$cal13CH4ml[1],
-                          P = orgFitP,
-                          k = orgFitk,
+                          P = 8,
+                          k = 1,
                           frac_P = newFitFracP,
                           frac_k = newFitFrack
                           )
 
 
 dat_new <- cbind(Sample64_dat, y_new)
-dat_new$fit <- "New"
 
-comparison <- rbind(dat_new, dat_og)
-
-#graph two fits
-ggplot(data = comparison) +
-  geom_point(aes(time_days, (nt/(mt+nt))), color = "red") +
-  geom_point(aes(time_days, (cal13CH4ml/(cal12CH4ml+cal13CH4ml))), color = "blue") +
-  facet_grid(.~fit)
+#graph new fit
+ggplot(data = dat_new) +
+  geom_point(aes(time_days, (nt/mt)*100, color = "Predictions")) +
+  geom_point(aes(time_days, (cal13CH4ml/(cal12CH4ml+cal13CH4ml))*100, color = "Observations")) +
+  scale_color_manual(name = "",
+                     breaks = c("Predictions", "Observations"),
+                     values = c("Predictions" = "red", "Observations" = "blue")) +
+  ylab("Atom%13C\n")
 ```
 
 (As before, we are using `pdr_optimize_tidy` for tidy data frame output.)
 
 We can see that
 
-* the initial value of `P` was specified
-* the intial value of `k` was computed from the data, because we did not specify it
+* the values of `P` and `k` were specified
 * initial values for `frac_P` and `frac_k` were looked up from the package's `pdr_fractionation` table based on the pool (here, methane)
 * as requested, the optimizer only optimized `frac_P` and `frac_k`
 
 The help page for `pdr_optimize` provides other examples of this.
-
-### Known Production rate
   
+\
 ## Under the hood.  
     
   
