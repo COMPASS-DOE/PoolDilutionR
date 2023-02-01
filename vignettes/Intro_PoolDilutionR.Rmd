@@ -268,7 +268,7 @@ Caution should be used in parameter selection, based on prior knowledge of the b
 Here we tell `pdr_optimize` that the production and consumption
 values are fixed (i.e., known) and ask it to optimize only the fractionation rates:
 
-```{r Optimize frac rates}
+```{r Optimize frac rates, fig.height = 4, fig.width = 6}
 # In this example, we assume that P and k are known, but that fractionation rates are unknown.
 
 Sample64_dat <- subset(Morris2023, subset = id == "64")
@@ -320,49 +320,58 @@ We can see that
 
 The help page for `pdr_optimize` provides other examples of this.
   
-\
+  
 ## Under the hood.  
     
   
 ### Prediction  
-  
-Equation 9  
-$$ n_t = n_0^{(-k\alpha t)}$$  
-  
-Equation 10  
-  
-***  
-***  
-$AP_p$?  
-***  
-***  
-  
-$$ AP_t = \frac {n_t}{m_t} + AP_p $$
 
-Equation 11
-From von Fischer and Hedin 2002 (equation 11):\
-\
-$$
-AP_t = \frac{n_0^{-k\alpha t}}{\frac{P}{k}-(\,\frac{P}{k}-m_0)^{-kt}\,}
-$$
-Where:  
-$AP_t$ is the predicted atom percent composition of the pool at time $t$.    
-$n_0$ is the pool size of the heavy isotopologue at time zero.  
-$m_0$ is the total pool size at time zero.  
-$P$ is the gross production rate.  
-$k$ is the first order rate constant of consumption.  
-$t$ is time.  
+The equations in `ap_pred()` come from the following equations in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448). 
+  
+**Equation 9**; which tracks the change in the heavy isotopologue over time in terms of consumption and it's fractionation constants.  
+  
+$$ n_t = n_0^{(-k\alpha t)}$$  
+
+  where:
+  
+  $n_t$ is the pool size of the heavy isotopologue at time *t*.  
+  $n_0$ is the pool size of the heavy isotopologue at time zero. 
+  $k$ is the first order rate constant of consumption.  
+  $t$ is time.  
   
 and    
 $$
 \alpha = \frac{k_{(\,^{13}C)\,}}{k_{(\,^{12}C)\,}}
 $$
-\
+  \
 Where:\
 $k_{(\,^{13}C)\,}$ is the first-order rate constant for consumption of 13CH4\
 and\
 $k_{(\,^{12}C)\,}$ is the first-order rate constant for consumption of 12CH4\
 \
+\
+We expand this equation to allow for the production of heavy molecules from authocthonous sources.  
+  
+  $$n_t = \frac{p_{frac}}{k_{frac}} - ( \frac{p_{frac}}{k_{frac}} - 0) * e^{-k_{frac}t}$$
+
+  
+Equation 10; which gives the atom percent content to the pool for each time step in terms of gross rates and their fractionation constants.  
+  
+  
+$$ AP_t = \frac {n_t}{m_t} + AP_p $$
+  
+  where:  
+  
+  $AP_t$ is the predicted atom percent composition of the pool at time $t$.    
+  $n_t$ is the pool size of the heavy isotopologue at time *t*, as above.  
+  $m_t$ is the total pool size at time *t*.  
+  
+Equations 9 and 10 are combined in Equation 11;  
+  
+$$
+AP_t = \frac{n_0^{-k\alpha t}}{\frac{P}{k}-(\,\frac{P}{k}-m_0)^{-kt}\,}
+$$
+
 ### Cost Function  
 
 $$E = \left(\sum_{t=1}^j\frac {AP_{obs}(t) - AP_{pred}(t)}{SD_{obs-AP}}\right) * N_{ap} + \left(\sum_{t=1}^j\frac {m_{obs}(t) - m_{pred}(t)}{SD_{obs-m}}\right) * N_{m}$$
