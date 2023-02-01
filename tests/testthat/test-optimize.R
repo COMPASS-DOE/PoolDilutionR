@@ -72,7 +72,7 @@ test_that("pdr_optimize works", {
   m <- c(10, 8, 6, 5, 4, 3)
   n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
   m_prec <- 0.001
-  ap_prec = 1
+  ap_prec = 0.1
 
   # bad input
   expect_error(pdr_optimize(c(0, 2, 1), quiet = TRUE), regexp = "must increase")

@@ -2,12 +2,12 @@
 #' Cost function between observed and predicted pools
 #'
 #' @param params Named list holding optimizer-assigned values for parameters
-#' @param time Vector of numeric time values (e.g. days); first should be zero
-#' @param m Observed pool size (as a volume), same length as time
-#' @param n Observed heavy isotope (as a volume), same length as time
+#' @param time Vector of numeric time values; first should be zero
+#' @param m Observed total pool size, same length as time
+#' @param n Observed pool size of heavy isotope, same length as time
 #' @param m_prec Instrument precision for pool size, expressed as a standard deviation
 #' @param ap_prec Instrument precision for atom percent, expressed as a standard deviation
-#' @param P production rate, unit gas/unit time
+#' @param P production rate, unit pool size/unit time
 #' @param k first-order rate constant for consumption, 1/unit time
 #' @param pool Name of pool; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
@@ -16,7 +16,7 @@
 #'
 #' @importFrom stats sd
 #' @return Returns a cost metric summarizing the difference between the
-#' predicted and observed \code{m} (total pool amount) and \code{AP} (atom percent).
+#' predicted and observed \code{m} (total pool size) and \code{AP} (atom percent).
 #' @export
 #'
 #' @note This implements Equations 12-14 from von Fischer and Hedin (2002).
@@ -24,7 +24,7 @@
 #' @examples
 #' m <- c(10, 8, 6, 5, 4, 3)
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-#' cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, m_prec = 0.001, ap_prec = 1)
+#' cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, m_prec = 0.001, ap_prec = 0.1)
 cost_function <- function(params, # values are set by optim()
                           time, m, n, m_prec, ap_prec,
                           P,
@@ -49,13 +49,14 @@ cost_function <- function(params, # values are set by optim()
                         frac_P = frac_P,
                         frac_k = frac_k)
 
-  pool_weight = sd(m) / m_prec # Normalization factor for pool size, see Eq. 12
-  ap_weight = sd((n / (n + m)) * 100) / ap_prec # Normalization factor for isotopic signature, see Eq. 13
+  ap_obs <- (n / (n + m)) * 100
+  pool_weight <- sd(m) / m_prec # Normalization factor for pool size, see Eq. 12
+  ap_weight <- sd(ap_obs) / ap_prec # Normalization factor for isotopic signature, see Eq. 13
 
   # von Fischer and Hedin (2002) equation 14
-  cost <- (sum(abs(m - pred$mt) / sd(m))) * pool_weight +
-          (sum(abs((n/(n+m))*100 - (pred$nt/(pred$nt+pred$mt))*100)) / sd((n/(n+m))*100)
-           * ap_weight)
+  cost <- sum(abs(ap_obs - pred$AP_pred) / sd(ap_obs)) * ap_weight +
+    sum(abs(m - pred$mt) / sd(m)) * pool_weight
+
   # Log progress and return to optimizer
   if(!is.null(log_progress)) {
     log_progress(data.frame(P = P, k = k, frac_P = frac_P, frac_k = frac_k, cost = cost))
