@@ -21,12 +21,12 @@ knitr::opts_chunk$set(
 
 # What is Pool Dilution?
   
-Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue (molecules of the same chemical formula and bonding structure that differ only in their isotopic composition). After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations [Kirkham and Bartholomew 1954](https://doi.org/10.2136/sssaj1954.03615995001800010009x).
+Pool dilution is an isotope tracer technique wherein a biogeochemical pool is artificially enriched with its heavy isotopologue (molecules of the same chemical formula and bonding structure that differ only in their isotopic composition). After enrichment, the gross production and consumption rates of that pool can be calculated using the change in isotopic signature and absolute pool size over time. This technique can be applied to many different chemical species and was originally developed to measure soil nutrient transformations by [Kirkham and Bartholomew in 1954](https://doi.org/10.2136/sssaj1954.03615995001800010009x).
 
 
 ## PoolDilutionR
 
-`PoolDilutionR` uses equations originally published in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448), with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
+`PoolDilutionR` uses equations originally published in [von Fischer and Hedin (2002)](https://doi.org/10.1029/2001GB001448), with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
 \
 
    
@@ -67,12 +67,12 @@ pdr_optimize(time = OneSample_dat$time_days, # time as a vector
 )
 ```
 
-Notice that `pdr_optimize` calculated or looked up three parameters that we didn't provide:
+Notice that `pdr_optimize()` calculated or looked up three parameters that we didn't provide:
 `frac_P`, the fractionation constant for production; `frac_k`, the fractionation constant for consumption; and `k0`, the initial value for the first order rate constant of consumption.
 The first two are taken from default values for methane as provided in the 
 package's `pdr_fractionation` dataset, while the latter is estimated from the data, using the slope of the pool size of heavy isotope over time (`n_slope`).
 
-`pdr_optimize` returns a list with the following entries:
+`pdr_optimize()` returns a list with the following entries:
 
 * `par` - the final optimized values of (in this case) production (`P`) and the first order rate constant of consumption (`k`)*, as calculated by `optim()`
 * `value`, `counts`, `convergence`, `message` - these are all returned by `optim()`
@@ -115,7 +115,7 @@ ggplot(data = long_Morris2023,
 
 ### Visual Summary of Multisample Output
 
-Now we show a graphical summary of the results from running these samples through `pdr_optimize()` with the same arguments as shown for a single sample above.  
+Now we show a graphical summary of the results from running these samples through `pdr_optimize_tidy()` with the same arguments as shown for a single sample above.  
  
 ```{r lapply(PoolDilutionR), message = FALSE}
 samples <- split(Morris2023, Morris2023$id)
@@ -238,9 +238,11 @@ ggplot(incdat_out, aes(time_days, AP_obs, color = id)) +
   xlab("\n Timestep \n") + ylab("\n (13C-CH4/Total CH4) x 100 \n") +
   ggtitle("\n Atom% 13C \n") + theme(legend.position = "bottom")
 ```
-  
-Pool size predictions are consistently tight to observations, whereas signature fits have more variation.  
-  
+\
+\
+Pool size predictions (below) are consistently tight to observations, whereas isotopic signature fits (above) have more variation.  
+\
+\
 ```{r Multisample Fit Total Pool, echo = FALSE, fig.height = 5.5, fig.width = 8.25}
 ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
   geom_point(aes(shape = ""), size = 4) +
@@ -268,7 +270,7 @@ Caution should be used in parameter selection, based on prior knowledge of the b
   
 ### Optimization of Fractionation  
 
-Here we tell `pdr_optimize` that the production and consumption
+Here we tell `pdr_optimize()` that the production and consumption
 values are known (and therefore fixed) and ask it to optimize only the fractionation rates:
 
 ```{r Optimize frac rates, fig.height = 4, fig.width = 6}
@@ -313,7 +315,7 @@ ggplot(data = dat_new) +
 print(new_fit)
 ```
 
-(As before, we are using `pdr_optimize_tidy` for tidy data frame output.)
+(As before, we are using `pdr_optimize_tidy()` for tidy data frame output.)
 
 We can see that
 
@@ -321,7 +323,7 @@ We can see that
 * initial values for `frac_P` and `frac_k` were looked up from the package's `pdr_fractionation` table based on the pool (here, methane)
 * as requested, the optimizer only optimized `frac_P` and `frac_k`
 
-The help page for `pdr_optimize` provides other examples of this.
+The help page for `pdr_optimize()` provides other examples of this.
   
   
 ## Under the hood.  
@@ -329,7 +331,7 @@ The help page for `pdr_optimize` provides other examples of this.
   
 ### Prediction  
 
-The equations in `ap_pred()` come from the following equations in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448). 
+The equations in `ap_prediction()` come from the following equations in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448). 
 \
 \
 **Equation 5** describes the change in pool size over time in terms of $P$, gross production, and $k$, the first order rate constant of consumption.  
@@ -367,7 +369,7 @@ In `PoolDilutionR`, we expand this equation to allow for the production of heavy
 **Equation 9, adjusted**  
   $$n_t = \frac{p_{frac}}{k_{frac}} - ( \frac{p_{frac}}{k_{frac}} - 0) * e^{-k_{frac}t}$$
   
-  Where $k_{frac}$ is equivalent to $\alpha$ above, for whatever heavy isotope is applicable.\
+  Where $k_{frac}$ is equivalent to $k*\alpha$ above, for whatever heavy isotope is applicable.\
 \
 \
 The isotopic composition of the pool over time is described in **Equation 10**.  
@@ -393,7 +395,7 @@ $$
 
 ### Cost Function  
   
-  The `cost_function()` provides feedback to `ap_pred()` on the quality of each iteration of fitted rates and/or fractionation constants. The sum of errors are weighted by the standard deviation of the observations, as well as a scaling factor, ($N$).  
+  The `cost_function()` provides feedback to `ap_prediction()` on the quality of each iteration of fitted rates and/or fractionation constants. The sum of errors are weighted by the standard deviation of the observations, as well as a scaling factor, ($N$).  
 \
 \
   **Equation 14**:
@@ -418,9 +420,17 @@ $$E = \left(\sum_{t=1}^j\frac {AP_{obs}(t) - AP_{pred}(t)}{SD_{obs-AP}}\right) *
 Users have the ability to replace the default `cost_function()` with their own, if desired.  
   
 ### Fractionation  
-  
-Fractionation describes the tendency of heavier isotopes and isotopologues to resist chemical transformation, whether these be phase changes, passive (term?) chemical reactions, or enzyme-mediated. There are two major types of fractionation. Equilibrium fractionation occurs when phase changes favor the heavier isotopologue staying a lower energy state (Urey 1947, Druhan, Winnick, and Thullner 2019). A typical example would be the relative enrichment of the ocean in heavy water $H_2^{18}O$ due to preferential evaporation of light water $H_2^{16}O$. The second major type of fractionation is kinetic, and is classically associated enzyme selectivity (citation). This is what drives the distinction in $^{13}C$ signatures between C3 and C4 plants (citation).  
+\
+\
+Fractionation describes the tendency of heavier isotopes and isotopologues to resist chemical transformation, whether these be phase changes or chemical reactions, whether spontaneous or enzyme-mediated. There are two major types of fractionation. Equilibrium fractionation occurs when phase changes favor the heavier isotopologue staying a lower energy state ([Druhan, Winnick, and Thullner 2019](https://doi.org/10.2138/rmg.2019.85.8), [Urey 1947](https://doi.org/10.1039/JR9470000562)). A typical example would be the relative enrichment of the ocean in heavy water $H_2^{18}O$ due to preferential evaporation of light water $H_2^{16}O$. The second major type of fractionation is kinetic, and is classically associated enzyme selectivity. This is what drives the distinction in $^{13}C$ signatures between C3 and C4 plants ([O'Leary 1981](https://doi.org/10.1016/0031-9422(81)85134-5)).  
 
-While our knowledge of enzyme diversity is rapidly expanding and additional fractionation rates will be added to `pdr_fraction` as part of future package versions.
+Because our knowledge of earth system processes and enzyme diversity is rapidly expanding, additional fractionation constants will be added to `pdr_fraction` as part of future package versions.
 
-## Literature
+## Literature  
+
+* Druhan, J. L., Winnick, M. J., & Thullner, M. (2019). Stable Isotope Fractionation by Transport and Transformation. Reviews in Mineralogy and Geochemistry, 85(1), 239–264.  
+* Kirkham, D., & Bartholomew, W. V. (1954). Equations for following nutrient transformations in soil, utilizing tracer Data 1. Soil Science Society of America Journal. Soil Science Society of America, 18(1), 33.  
+* O’Leary, M. H. (1981). Carbon isotope fractionation in plants. Phytochemistry, 20(4), 553–567.  
+* Urey, H. C. (1947). The thermodynamic properties of isotopic substances. Journal of the Chemical Society, 0, 562–581.  
+* von Fischer, J. C., & Hedin, L. O. (2002). Separating methane production and consumption with a field-based isotope pool dilution technique. Global Biogeochemical Cycles, 16(3), 8-1-8–13.  
+
