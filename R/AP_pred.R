@@ -32,7 +32,7 @@ ap_prediction <- function(time, m0, n0, P, k,
 
   # Equation 5 (and denominator in Eq. 11 of von Fischer and Hedin 2002):
   mt <- P / k - (P / k - m0) * exp(-k * time)
-  ap <- (nt / (nt + mt)) * 100
+  ap <- (nt / mt) * 100
   # If any nt values are zero, we want the corresponding atom percent values
   # also to be zero, not Inf or Nan
   ap[nt == 0] <- 0.0
