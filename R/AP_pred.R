@@ -1,4 +1,3 @@
-
 #' Predict total pool, heavy isotope pool, and atom percent
 #'
 #' @param time Vector of numeric time values (e.g. days); first should be zero
@@ -18,13 +17,12 @@
 #' @examples
 #' pdr_predict(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)
 pdr_predict <- function(time, m0, n0, P, k,
-                          pool = "CH4",
-                          frac_P = frac_P_default(pool),
-                          frac_k = frac_k_default(pool)) {
-
-  if(! is.numeric(time)) stop("Time must be numeric.")
-  if(!all(diff(time) > 0)) stop("Time values must increase.")
-  if(time[1] != 0.0) stop("First time value must be zero.")
+                        pool = "CH4",
+                        frac_P = frac_P_default(pool),
+                        frac_k = frac_k_default(pool)) {
+  if (!is.numeric(time)) stop("Time must be numeric.")
+  if (!all(diff(time) > 0)) stop("Time values must increase.")
+  if (time[1] != 0.0) stop("First time value must be zero.")
 
   kfrac <- k * frac_k
   pfrac <- P * frac_P
@@ -37,5 +35,5 @@ pdr_predict <- function(time, m0, n0, P, k,
   # also to be zero, not Inf or Nan
   ap[nt == 0] <- 0.0
 
-  data.frame(mt = mt, nt = nt, AP_pred =  ap)
+  data.frame(mt = mt, nt = nt, AP_pred = ap)
 }

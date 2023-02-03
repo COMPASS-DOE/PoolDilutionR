@@ -1,5 +1,4 @@
 test_that("set_default_params works", {
-
   p <- list(P0 = 1)
   times <- 0:5
   # convenience function
@@ -44,12 +43,10 @@ test_that("set_default_params works", {
   p$control <- "test"
   x <- sdp(p)
   expect_identical(x$control, "test")
-
 })
 
 
 test_that("pdr_estimate_k0 works", {
-
   # bad input
   expect_error(pdr_estimate_k0(c(0, 2, 1)), regexp = "must increase")
 
@@ -66,48 +63,69 @@ test_that("pdr_estimate_k0 works", {
 })
 
 test_that("pdr_optimize works", {
-
   # input data (from the pdr_optimize examples)
   tm <- 0:5
   m <- c(10, 8, 6, 5, 4, 3)
   n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
   m_prec <- 0.001
-  ap_prec = 0.1
+  ap_prec <- 0.1
 
   # bad input
   expect_error(pdr_optimize(c(0, 2, 1), quiet = TRUE), regexp = "must increase")
-  expect_error(pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                            params_to_optimize = "bad_param", quiet = TRUE),
-               regexp = "params_to_optimize must be")
+  expect_error(
+    pdr_optimize(tm, m, n, m_prec, ap_prec,
+      P = 0.5, k = 0.3,
+      params_to_optimize = "bad_param", quiet = TRUE
+    ),
+    regexp = "params_to_optimize must be"
+  )
 
   # try all possible combinations of params_to_optimize: P, k, P and k, etc.
   params <- c("P", "k", "frac_P", "frac_k")
   param_sets <- c()
-  for(i in seq_along(params)) {
+  for (i in seq_along(params)) {
     param_sets <- c(param_sets, combn(params, i, simplify = FALSE))
   }
-  for(p in param_sets) {
-    expect_type(pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                             params_to_optimize = p, quiet = TRUE),
-                "list")
+  for (p in param_sets) {
+    expect_type(
+      pdr_optimize(tm, m, n, m_prec, ap_prec,
+        P = 0.5, k = 0.3,
+        params_to_optimize = p, quiet = TRUE
+      ),
+      "list"
+    )
   }
 
   # Produces message if looking up frac_P and/or frac_k
-  expect_message(pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5,
-                              frac_P = 0.01, frac_k = 0.98),
-                 regexp = "Estimated k0")
+  expect_message(
+    pdr_optimize(tm, m, n, m_prec, ap_prec,
+      P = 0.5,
+      frac_P = 0.01, frac_k = 0.98
+    ),
+    regexp = "Estimated k0"
+  )
 
 
   # estimates k if not given
   # here we provide frac_P and frac_k as don't want those messages
-  expect_silent(pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                              frac_P = 0.01, frac_k = 0.98))
-  expect_message(pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                             frac_k = 0.98),
-                regexp = "No frac_P provided")
-  expect_message(pdr_optimize(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                             frac_P = 0.01),
-                regexp = "No frac_k provided")
+  expect_silent(pdr_optimize(tm, m, n, m_prec, ap_prec,
+    P = 0.5, k = 0.3,
+    frac_P = 0.01, frac_k = 0.98
+  ))
+  expect_message(
+    pdr_optimize(tm, m, n, m_prec, ap_prec,
+      P = 0.5, k = 0.3,
+      frac_k = 0.98
+    ),
+    regexp = "No frac_P provided"
+  )
+  expect_message(
+    pdr_optimize(tm, m, n, m_prec, ap_prec,
+      P = 0.5, k = 0.3,
+      frac_P = 0.01
+    ),
+    regexp = "No frac_k provided"
+  )
 
   # initial parameters respected
   P <- 0.5
@@ -119,38 +137,47 @@ test_that("pdr_optimize works", {
   # upper and lower bounds respected
   bounds <- c(default$par["k"] * 1.1, default$par["k"] * 1.3)
   bounds <- unname(bounds)
-  bounded <- pdr_optimize(tm, m, n, m_prec, ap_prec, P = P, k = k,
-                          other_params = list(lower = c("k" = bounds[1]),
-                                              upper = c("k" = bounds[2])),
-                          quiet = TRUE)
+  bounded <- pdr_optimize(tm, m, n, m_prec, ap_prec,
+    P = P, k = k,
+    other_params = list(
+      lower = c("k" = bounds[1]),
+      upper = c("k" = bounds[2])
+    ),
+    quiet = TRUE
+  )
   expect_true(bounded$par["k"] >= bounds[1])
   expect_true(bounded$par["k"] <= bounds[2])
 
   # include_progress works
   x <- pdr_optimize(tm, m, n, m_prec, ap_prec, P = P, k = k, quiet = TRUE)
   expect_null(x$progress)
-  y <- pdr_optimize(tm, m, n, m_prec, ap_prec, P = P, k = k,
-                    include_progress = TRUE, quiet = TRUE)
+  y <- pdr_optimize(tm, m, n, m_prec, ap_prec,
+    P = P, k = k,
+    include_progress = TRUE, quiet = TRUE
+  )
   expect_s3_class(y$progress, "data.frame")
 })
 
 test_that("pdr_optimize_df works", {
-
   # input data (from the pdr_optimize examples)
   tm <- 0:5
   m <- c(10, 8, 6, 5, 4, 3)
   n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
   m_prec <- 0.001
-  ap_prec = 1
+  ap_prec <- 1
 
   # Should return a data frame with one row per parameter estimated
-  x <- pdr_optimize_df(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                         params_to_optimize = c("P", "k"), quiet = TRUE)
+  x <- pdr_optimize_df(tm, m, n, m_prec, ap_prec,
+    P = 0.5, k = 0.3,
+    params_to_optimize = c("P", "k"), quiet = TRUE
+  )
   expect_s3_class(x, "data.frame")
   expect_identical(nrow(x), 2L)
 
-  x <- pdr_optimize_df(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                         params_to_optimize = c("P"), quiet = TRUE)
+  x <- pdr_optimize_df(tm, m, n, m_prec, ap_prec,
+    P = 0.5, k = 0.3,
+    params_to_optimize = c("P"), quiet = TRUE
+  )
   expect_s3_class(x, "data.frame")
   expect_identical(nrow(x), 1L)
 })
