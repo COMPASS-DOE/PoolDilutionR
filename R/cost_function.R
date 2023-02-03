@@ -24,8 +24,8 @@
 #' @examples
 #' m <- c(10, 8, 6, 5, 4, 3)
 #' n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
-#' cost_function(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, m_prec = 0.001, ap_prec = 0.1)
-cost_function <- function(params, # values are set by optim()
+#' pdr_cost(params = list(P = 0.5, k = 0.3), time = 0:5, m, n, m_prec = 0.001, ap_prec = 0.1)
+pdr_cost <- function(params, # values are set by optim()
                           time, m, n, m_prec, ap_prec,
                           P,
                           k,
@@ -41,7 +41,7 @@ cost_function <- function(params, # values are set by optim()
   if("frac_P" %in% names(params)) frac_P <- params[["frac_P"]]
   if("frac_k" %in% names(params)) frac_k <- params[["frac_k"]]
 
-  pred <- ap_prediction(time = time,
+  pred <- pdr_predict(time = time,
                         m0 = m[1],
                         n0 = n[1],
                         P = P,

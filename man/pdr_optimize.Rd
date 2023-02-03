@@ -17,8 +17,8 @@ pdr_optimize(
   frac_P = NULL,
   frac_k = NULL,
   other_params = list(),
-  cost_fn = cost_function,
-  prediction_fn = ap_prediction,
+  cost_fn = pdr_cost,
+  prediction_fn = pdr_predict,
   include_progress = FALSE,
   quiet = FALSE
 )
@@ -49,10 +49,10 @@ and/or "frac_k") to optimize against observations}
 
 \item{other_params}{Other parameters pass on to \code{\link{optim}}}
 
-\item{cost_fn}{Cost function to use; the default is \code{\link{cost_function}}}
+\item{cost_fn}{Cost function to use; the default is \code{\link{pdr_cost}}}
 
 \item{prediction_fn}{Prediction function that the cost function will use;
-the default is \code{\link{ap_prediction}}}
+the default is \code{\link{pdr_predict}}}
 
 \item{include_progress}{Include detailed optimizer progress data in output?}
 
@@ -84,5 +84,5 @@ op <- list(lower = c("k" = 0.2), upper = c("k" = 0.3))
 pdr_optimize(tm, m, n, m_prec, ap_prec, 0.5, 0.27, params_to_optimize = "k", other_params = op)
 }
 \seealso{
-\code{\link{pdr_optimize_tidy}}
+\code{\link{pdr_optimize_df}}
 }

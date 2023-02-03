@@ -14,15 +14,15 @@
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #' @param other_params Other parameters pass on to \code{\link{optim}}
-#' @param cost_fn Cost function to use; the default is \code{\link{cost_function}}
+#' @param cost_fn Cost function to use; the default is \code{\link{pdr_cost}}
 #' @param prediction_fn Prediction function that the cost function will use;
-#' the default is \code{\link{ap_prediction}}
+#' the default is \code{\link{pdr_predict}}
 #' @param include_progress Include detailed optimizer progress data in output?
 #' @param quiet Suppress output messages, logical
 #'
 #' @importFrom stats optim
 #' @return The output of \code{\link{optim}}.
-#' @seealso \code{\link{pdr_optimize_tidy}}
+#' @seealso \code{\link{pdr_optimize_df}}
 #' @export
 #'
 #' @examples
@@ -51,8 +51,8 @@ pdr_optimize <- function(time, m, n, m_prec, ap_prec,
                          frac_P = NULL,
                          frac_k = NULL,
                          other_params = list(),
-                         cost_fn = cost_function,
-                         prediction_fn = ap_prediction,
+                         cost_fn = pdr_cost,
+                         prediction_fn = pdr_predict,
                          include_progress = FALSE,
                          quiet = FALSE) {
 
@@ -202,8 +202,8 @@ pdr_estimate_k0 <- function(time, n, frac_k, quiet = FALSE) {
 #' m_prec <- 0.001
 #' ap_prec = 0.1
 #' # Optimize values for P (production) and k (consumption)
-#' pdr_optimize_tidy(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
-pdr_optimize_tidy <- function(...) {
+#' pdr_optimize_df(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
+pdr_optimize_df <- function(...) {
   x <- pdr_optimize(...)
 
   # Return results as a 'tidy' data.frame
