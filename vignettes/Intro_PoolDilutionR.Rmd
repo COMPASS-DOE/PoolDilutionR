@@ -53,7 +53,7 @@ print(OneSample_dat)
 
 
 To solve for gross methane production and consumption for this sample, we call `pdr_optimize()`, which in turn uses R's `optim()` to minimize the error in the observed vs predicted pool size and isotopic composition. 
-Errors are weighted by a  combination of data quality and explanatory power (*ie*., `cost_fuction()`) and predictions are made using `ap_prediction()`. See *Under the hood.* for more information.\
+Errors are weighted by a  combination of data quality and explanatory power (*ie*., `cost_fuction()`) and predictions are made using `pdr_predict()`. See *Under the hood.* for more information.\
 
 
 ```{r Solve for P and k}
@@ -85,7 +85,7 @@ This list has a great deal of detail, but we can also get a summarized form in
 a convenient data frame output format:
 
 ```{r OneSample Results}
-pdr_optimize_tidy(time = OneSample_dat$time_days,
+pdr_optimize_df(time = OneSample_dat$time_days,
                   m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml,
                   n = OneSample_dat$cal13CH4ml,
                   P = 0.1,
@@ -115,13 +115,13 @@ ggplot(data = long_Morris2023,
 
 ### Visual Summary of Multisample Output
 
-Now we show a graphical summary of the results from running these samples through `pdr_optimize_tidy()` with the same arguments as shown for a single sample above.  
+Now we show a graphical summary of the results from running these samples through `pdr_optimize_df()` with the same arguments as shown for a single sample above.  
  
 ```{r lapply(PoolDilutionR), message = FALSE}
 samples <- split(Morris2023, Morris2023$id)
 
 all_results <- lapply(samples, FUN = function(samples) {
-   pdr_optimize_tidy(time = samples$time_days,
+   pdr_optimize_df(time = samples$time_days,
                      m = samples$cal12CH4ml + samples$cal13CH4ml,
                      n = samples$cal13CH4ml,
                      P = 0.1,
@@ -171,7 +171,7 @@ result <- pdr_optimize(time = dat$time_days,
                               message = result$message)
     
     # Predict based on the optimized parameters
-    pred <- ap_prediction(time = dat$time_days,
+    pred <- pdr_predict(time = dat$time_days,
                           m0 = dat$cal12CH4ml[1] + dat$cal13CH4ml[1],
                           n0 = dat$cal13CH4ml[1],
                           P = P,
@@ -186,7 +186,7 @@ result <- pdr_optimize(time = dat$time_days,
       y1<- data.frame(P = x$P[1],
                       k = x$k[1],
                       time = seq(min(dat$time_days), max(dat$time_days), length.out = 20))
-      y2 <- ap_prediction(time = y1$time,
+      y2 <- pdr_predict(time = y1$time,
                           m0 = dat$cal12CH4ml[1] + dat$cal13CH4ml[1],
                           n0 = dat$cal13CH4ml[1],
                           P = x$P[1],
@@ -278,7 +278,7 @@ values are known (and therefore fixed) and ask it to optimize only the fractiona
 
 Sample64_dat <- subset(Morris2023, subset = id == "64")
 
-new_fit<- pdr_optimize_tidy(time = Sample64_dat$time_days,
+new_fit<- pdr_optimize_df(time = Sample64_dat$time_days,
                   m = Sample64_dat$cal12CH4ml + Sample64_dat$cal13CH4ml, 
                   n = Sample64_dat$cal13CH4ml,
                   P = 8,
@@ -291,7 +291,7 @@ newFitFracP <- new_fit[new_fit$par == "frac_P",]$value
 newFitFrack <- new_fit[new_fit$par == "frac_k",]$value
 
 #dataframe with new fit (optimizing P_frac and k_frac)
-y_new <- ap_prediction(time = Sample64_dat$time_days,
+y_new <- pdr_predict(time = Sample64_dat$time_days,
                           m0 = Sample64_dat$cal12CH4ml[1] + Sample64_dat$cal13CH4ml[1],
                           n0 = Sample64_dat$cal13CH4ml[1],
                           P = 8,
@@ -315,7 +315,7 @@ ggplot(data = dat_new) +
 print(new_fit)
 ```
 
-(As before, we are using `pdr_optimize_tidy()` for tidy data frame output.)
+(As before, we are using `pdr_optimize_df()` for tidy data frame output.)
 
 We can see that
 
@@ -331,7 +331,7 @@ The help page for `pdr_optimize()` provides other examples of this.
   
 ### Prediction  
 
-The equations in `ap_prediction()` come from the following equations in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448). 
+The equations in `pdr_predict()` come from the following equations in [von Fischer and Hedin 2002](https://doi.org/10.1029/2001GB001448). 
 \
 \
 **Equation 5** describes the change in pool size over time in terms of $P$, gross production, and $k$, the first order rate constant of consumption.  
@@ -395,7 +395,7 @@ $$
 
 ### Cost Function  
   
-  The `cost_function()` provides feedback to `ap_prediction()` on the quality of each iteration of fitted rates and/or fractionation constants. The sum of errors are weighted by the standard deviation of the observations, as well as a scaling factor, ($N$).  
+  The `pdr_cost()` provides feedback to `pdr_predict()` on the quality of each iteration of fitted rates and/or fractionation constants. The sum of errors are weighted by the standard deviation of the observations, as well as a scaling factor, ($N$).  
 \
 \
   **Equation 14**:
@@ -417,7 +417,7 @@ $$E = \left(\sum_{t=1}^j\frac {AP_{obs}(t) - AP_{pred}(t)}{SD_{obs-AP}}\right) *
   $SD_{x_{precision}}$ is the instrument precision for that variable as standard deviation (*ie.*, standard precision)  
 \
 \
-Users have the ability to replace the default `cost_function()` with their own, if desired.  
+Users have the ability to replace the default cost function (`pdr_cost()`) with their own, if desired.  
   
 ### Fractionation  
 \

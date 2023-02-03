@@ -16,8 +16,8 @@
 #' @note This is Eq. 11 from von Fischer and Hedin 2002 with a few modifications.
 #' @author K.A. Morris & B. Bond-Lamberty
 #' @examples
-#' ap_prediction(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)
-ap_prediction <- function(time, m0, n0, P, k,
+#' pdr_predict(time = 0:5, m0 = 10, n0 = 1, P = 0.5, k = 0.3)
+pdr_predict <- function(time, m0, n0, P, k,
                           pool = "CH4",
                           frac_P = frac_P_default(pool),
                           frac_k = frac_k_default(pool)) {

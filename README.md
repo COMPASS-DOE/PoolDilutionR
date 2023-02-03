@@ -27,7 +27,7 @@ Time series data of pool and isotopic composition.
 
 Prediction of P, gross production rate, and k, first order rate constant for consumption.
 
-    `pred <- ap_prediction(time = dat$time_days,
+    `pred <- pdr_predict(time = dat$time_days,
                           m0 = dat$cal12CH4ml[1] + dat$cal13CH4ml[1],
                           n0 = dat$cal13CH4ml[1],
                           P = P,

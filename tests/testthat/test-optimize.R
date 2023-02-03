@@ -134,7 +134,7 @@ test_that("pdr_optimize works", {
   expect_s3_class(y$progress, "data.frame")
 })
 
-test_that("pdr_optimize_tidy works", {
+test_that("pdr_optimize_df works", {
 
   # input data (from the pdr_optimize examples)
   tm <- 0:5
@@ -144,13 +144,13 @@ test_that("pdr_optimize_tidy works", {
   ap_prec = 1
 
   # Should return a data frame with one row per parameter estimated
-  x <- pdr_optimize_tidy(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                         params_to_optimize = c("P", "k"))
+  x <- pdr_optimize_df(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
+                         params_to_optimize = c("P", "k"), quiet = TRUE)
   expect_s3_class(x, "data.frame")
   expect_identical(nrow(x), 2L)
 
-  x <- pdr_optimize_tidy(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
-                         params_to_optimize = c("P"))
+  x <- pdr_optimize_df(tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3,
+                         params_to_optimize = c("P"), quiet = TRUE)
   expect_s3_class(x, "data.frame")
   expect_identical(nrow(x), 1L)
 })
