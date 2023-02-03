@@ -11,12 +11,14 @@ utils::globalVariables("pdr_fractionation")
 #' @examples
 #' frac_P_default("CH4")
 frac_P_default <- function(pool) {
-  if(!pool %in% pdr_fractionation$Pool) {
+  if (!pool %in% pdr_fractionation$Pool) {
     stop("This pool is not listed in pdr_fractionation")
   }
-  pdr_fractionation[pdr_fractionation$Pool == pool &
-                    pdr_fractionation$Default,
-                    "frac_P"]
+  pdr_fractionation[
+    pdr_fractionation$Pool == pool &
+      pdr_fractionation$Default,
+    "frac_P"
+  ]
 }
 
 
@@ -31,10 +33,12 @@ frac_P_default <- function(pool) {
 #' @examples
 #' frac_k_default("CH4")
 frac_k_default <- function(pool) {
-  if(!pool %in% pdr_fractionation$Pool) {
+  if (!pool %in% pdr_fractionation$Pool) {
     stop("This pool is not listed in pdr_fractionation")
   }
-  pdr_fractionation[pdr_fractionation$Pool == pool &
-                      pdr_fractionation$Default,
-                    "frac_k"]
+  pdr_fractionation[
+    pdr_fractionation$Pool == pool &
+      pdr_fractionation$Default,
+    "frac_k"
+  ]
 }

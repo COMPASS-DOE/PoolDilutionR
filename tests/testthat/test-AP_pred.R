@@ -36,5 +36,4 @@ test_that("pdr_predict works", {
 
   # Behavior: No discrimination
   # If inputs frac_P = frac_k = 1.0 , then output AP_pred should be constant.
-
 })
