@@ -57,7 +57,7 @@ Errors are weighted by a  combination of data quality and explanatory power (*ie
 
 
 ```{r Solve for P and k}
-pdr_optimize(time = OneSample_dat$time_days, # time as a vector
+results <- pdr_optimize(time = OneSample_dat$time_days, # time as a vector
              m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml, # total pool size
              n = OneSample_dat$cal13CH4ml,# pool size of heavy isotopologue
              P = 0.1, # inital production rate for optim()
@@ -72,6 +72,10 @@ Notice that `pdr_optimize()` calculated or looked up three parameters that we di
 The first two are taken from default values for methane as provided in the 
 package's `pdr_fractionation` dataset, while the latter is estimated from the data, using the slope of the pool size of heavy isotope over time (`n_slope`).
 
+```{r print(results)}
+print(results)
+```
+
 `pdr_optimize()` returns a list with the following entries:
 
 * `par` - the final optimized values of (in this case) production (`P`) and the first order rate constant of consumption (`k`)*, as calculated by `optim()`
@@ -84,7 +88,8 @@ package's `pdr_fractionation` dataset, while the latter is estimated from the da
 This list has a great deal of detail, but we can also get a summarized form in
 a convenient data frame output format:
 
-```{r OneSample Results}
+
+```{r OneSample Results Dataframe}
 pdr_optimize_df(time = OneSample_dat$time_days,
                   m = OneSample_dat$cal12CH4ml + OneSample_dat$cal13CH4ml,
                   n = OneSample_dat$cal13CH4ml,
@@ -93,8 +98,6 @@ pdr_optimize_df(time = OneSample_dat$time_days,
                   m_prec = 0.001,
                   ap_prec = 0.01)
 ```
-
-
 
 ## Multi-sample Processing
   
