@@ -346,19 +346,29 @@ y_new <- pdr_predict(
 
 
 dat_new <- cbind(Sample64_dat, y_new)
-dat_new$oldAPpred <- incdat_out[incdat_out$id == "64",]$AP_pred
+dat_new$oldAPpred <- incdat_out[incdat_out$id == "64", ]$AP_pred
 
 
 # graph new fit
 ggplot(data = dat_new) +
-  geom_point(aes(time_days, AP_pred, color = "New Prediction"), size = 3) +
-  geom_point(aes(time_days, AP_obs, color = "Observations"), size = 3) +
-  geom_point(aes(time_days, oldAPpred, color = "Old Prediction"),
-              size = 3) +
-  scale_color_manual(
-    name = "",
+  geom_point(aes(time_days, AP_pred, shape = "New Prediction", color = "New Prediction"),
+    size = 3, fill = "#619CFF"
+  ) +
+  geom_point(aes(time_days, AP_obs, , shape = "Observations", color = "Observations"),
+    size = 3
+  ) +
+  geom_point(aes(time_days, oldAPpred, shape = "Old Prediction", color = "Old Prediction"),
+    size = 3
+  ) +
+  scale_shape_manual(
+    name = "Sample 64",
     breaks = c("New Prediction", "Observations", "Old Prediction"),
-    values = c("New Prediction" = "red", "Observations" = "#619CFF", "Old Prediction" = "black")
+    values = c("New Prediction" = 21, "Observations" = 16, "Old Prediction" = 1)
+  ) +
+  scale_color_manual(
+    name = "Sample 64",
+    breaks = c("New Prediction", "Observations", "Old Prediction"),
+    values = c("New Prediction" = "black", "Observations" = "#619CFF", "Old Prediction" = "#619CFF")
   ) +
   ylab("Atom%13C\n")
 
