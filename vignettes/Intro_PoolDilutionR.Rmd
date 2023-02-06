@@ -346,15 +346,19 @@ y_new <- pdr_predict(
 
 
 dat_new <- cbind(Sample64_dat, y_new)
+dat_new$oldAPpred <- incdat_out[incdat_out$id == "64",]$AP_pred
+
 
 # graph new fit
 ggplot(data = dat_new) +
-  geom_point(aes(time_days, (nt / mt) * 100, color = "Predictions")) +
-  geom_point(aes(time_days, (cal13CH4ml / (cal12CH4ml + cal13CH4ml)) * 100, color = "Observations")) +
+  geom_point(aes(time_days, AP_pred, color = "New Prediction"), size = 3) +
+  geom_point(aes(time_days, AP_obs, color = "Observations"), size = 3) +
+  geom_point(aes(time_days, oldAPpred, color = "Old Prediction"),
+              size = 3) +
   scale_color_manual(
     name = "",
-    breaks = c("Predictions", "Observations"),
-    values = c("Predictions" = "red", "Observations" = "blue")
+    breaks = c("New Prediction", "Observations", "Old Prediction"),
+    values = c("New Prediction" = "red", "Observations" = "#619CFF", "Old Prediction" = "black")
   ) +
   ylab("Atom%13C\n")
 
