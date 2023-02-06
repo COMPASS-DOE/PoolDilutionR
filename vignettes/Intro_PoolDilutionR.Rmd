@@ -141,6 +141,7 @@ all_results <- lapply(samples, FUN = function(samples) {
     pool = "CH4",
     m_prec = 0.001,
     ap_prec = 0.01,
+    quiet = TRUE,
     include_progress = FALSE
   )
 })
@@ -169,6 +170,7 @@ for (i in unique(Morris2023$id)) {
     pool = "CH4",
     m_prec = 0.001,
     ap_prec = 0.01,
+    quiet = TRUE,
     include_progress = TRUE
   )
 

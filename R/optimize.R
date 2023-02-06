@@ -9,7 +9,8 @@
 #' @param k first-order rate constant for consumption, 1/unit time
 #' @param params_to_optimize Named vector of parameters ("P", "k", "frac_P",
 #' and/or "frac_k") to optimize against observations
-#' @param pool Name of pool; see \code{\link{pdr_fractionation}}
+#' @param pool Name of pool to use when looking up fractionation values if they
+#' are not supplied; see \code{\link{pdr_fractionation}}
 #' @param frac_P Fractionation value for production; see \code{\link{pdr_fractionation}}
 #' @param frac_k Fractionation value for consumption; see \code{\link{pdr_fractionation}}
 #' @param other_params Other parameters pass on to \code{\link{optim}}
@@ -18,7 +19,9 @@
 #' the default is \code{\link{pdr_predict}}
 #' @param include_progress Include detailed optimizer progress data in output?
 #' @param quiet Suppress output messages, logical
-#'
+#' @note Currently there is only one set of fractionation values available in
+#' \code{\link{pdr_fractionation}}, from von Fischer and Hedin
+#' (2002, 10.1029/2001GB001448).
 #' @importFrom stats optim
 #' @return The output of \code{\link{optim}}.
 #' @seealso \code{\link{pdr_optimize_df}}

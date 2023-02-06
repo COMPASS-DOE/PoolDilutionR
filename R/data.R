@@ -11,6 +11,8 @@
 #'   \item{Default}{Default for this pool? Logical}
 #'   \item{Source}{Source paper or URL}
 #' }
+#' @note Currently there is only one set of fractionation values available,
+#' from von Fischer and Hedin (2002, 10.1029/2001GB001448).
 "pdr_fractionation"
 
 #' Example time series data from a methane dilution pool experiment.

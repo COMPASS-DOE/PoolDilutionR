@@ -41,7 +41,8 @@ pdr_optimize(
 \item{params_to_optimize}{Named vector of parameters ("P", "k", "frac_P",
 and/or "frac_k") to optimize against observations}
 
-\item{pool}{Name of pool; see \code{\link{pdr_fractionation}}}
+\item{pool}{Name of pool to use when looking up fractionation values if they
+are not supplied; see \code{\link{pdr_fractionation}}}
 
 \item{frac_P}{Fractionation value for production; see \code{\link{pdr_fractionation}}}
 
@@ -63,6 +64,11 @@ The output of \code{\link{optim}}.
 }
 \description{
 Optimize production and consumption parameters for pool dilution data
+}
+\note{
+Currently there is only one set of fractionation values available in
+\code{\link{pdr_fractionation}}, from von Fischer and Hedin
+(2002, 10.1029/2001GB001448).
 }
 \examples{
 tm <- 0:5
