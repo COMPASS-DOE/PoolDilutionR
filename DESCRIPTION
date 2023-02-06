@@ -19,7 +19,7 @@ Description: This package calculates gross production and consumption rates from
     information against the signal:noise ratio of concentration and heavy-
     isotope signatures using measurement precision as well as the magnitude of 
     change over time. The calculations used here are based on von Fischer and 
-    Hedin 2002, 10.1029/2001GB001448, with some modifications.
+    Hedin (2002) <10.1029/2001GB001448> with some modifications.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
