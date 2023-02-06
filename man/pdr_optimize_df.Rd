@@ -22,7 +22,7 @@ tm <- 0:5
 m <- c(10, 8, 6, 5, 4, 3)
 n <- c(1, 0.7, 0.6, 0.4, 0.3, 0.2)
 m_prec <- 0.001
-ap_prec <- 0.1
+ap_prec <- 0.01
 # Optimize values for P (production) and k (consumption)
 pdr_optimize_df(time = tm, m, n, m_prec, ap_prec, P = 0.5, k = 0.3)
 }

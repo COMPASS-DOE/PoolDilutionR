@@ -6,7 +6,7 @@ test_that("pdr_cost works", {
   x <- pdr_cost(
     params = list(P = 0.5, k = 0.3),
     time = times,
-    m = m, n = n, m_prec = 0.001, ap_prec = 1
+    m = m, n = n, m_prec = 0.001, ap_prec = 0.01
   )
   expect_type(x, "double")
   expect_identical(length(x), 1L)
@@ -23,7 +23,7 @@ test_that("pdr_cost works", {
   pdr_cost(
     params = list(P = 0.5, k = 0.3),
     time = times,
-    m = m, n = n, m_prec = 0.001, ap_prec = 1,
+    m = m, n = n, m_prec = 0.001, ap_prec = 0.01,
     log_progress = logfn
   )
   expect_true(logfn_called)
