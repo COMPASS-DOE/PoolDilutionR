@@ -1,7 +1,7 @@
 Package: PoolDilutionR
 Type: Package
 Title: Calculate Gross Biogeochemical Flux Rates from Isotope Pool Dilution Data
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: c(person("Kendalynn A.", "Morris", 
 	        email = "kendalynn.morris@gmail.com", 
 	        role = c("cre", "aut"),

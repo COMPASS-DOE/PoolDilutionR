@@ -20,4 +20,8 @@ pdr_fractionation
 A compendium of possible production (P) and consumption (k) fractionation
 values, by pool.
 }
+\note{
+Currently there is only one set of fractionation values available,
+from von Fischer and Hedin (2002, 10.1029/2001GB001448).
+}
 \keyword{datasets}
