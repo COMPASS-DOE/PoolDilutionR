@@ -26,7 +26,7 @@ Pool dilution is an isotope tracer technique wherein a biogeochemical pool is ar
 
 ## PoolDilutionR
 
-`PoolDilutionR` uses equations originally published in [von Fischer and Hedin (2002)](https://doi.org/10.1029/2001GB001448), with some modifications. The strength of this method is that the equations take into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
+`PoolDilutionR` takes time series data from isotopic enrichment experiments and optimizes the value of gross production, the first order rate constant of consumption, and/or fractionation to fit those data. The goodness of the fit is determined by the difference between observed and predicted values and weighted by both the quality of data (ie., instrunent precision) and the data explanatory power (ie., variation over time). This is accomplished using equations originally published in [von Fischer and Hedin (2002)](https://doi.org/10.1029/2001GB001448), with some modifications. This approach differs from other pool dilution techniques in that it takes into account the effect of isotopic fractionation (see *Under the hood.* for more information.).  
 \
 
    
@@ -48,7 +48,10 @@ library(PoolDilutionR)
 OneSample_dat <- subset(Morris2023, subset = id == "71")
 print(OneSample_dat)
 ```
- 
+
+The question we are asking this data: What combination of gross fluxes (methane production and consumption) best fits the observed net fluxes implied by these concentration data?  
+\
+
 ### Solving for gross rates
 
 
@@ -235,7 +238,7 @@ all_predictions <- do.call(rbind, all_predictions)
 
 
 
-Below you can see the relative goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane) for six samples. Grey lines represent values tested on the way to the final optimized fit.  
+Below you can see the relative goodness of fit for final optimized P and k values (colored line) in terms of predicted isotopic signature (Atom% 13C) and pool size (Total Methane) for six samples. Grey lines represent values tested on the way to the final optimized fit. Code for reproducing these graphs is not shown, but is available in the publication associated with this package (citation and DOI pending acceptance).   
 \
 ```{r Future Note, include = FALSE, echo = FALSE}
 # For consideration, include link here to additional supplementary materials that include code for making the plots below
