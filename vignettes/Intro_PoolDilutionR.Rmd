@@ -256,7 +256,7 @@ ggplot(incdat_out, aes(time_days, AP_obs, color = id)) +
     aes(time, AP_pred, group = paste(id, P, k)), color = "grey", linetype = 2
   ) +
   geom_line(aes(y = AP_pred, group = id, linetype = ""),
-    linewidth = 1.5
+    size = 1.5
   ) +
   scale_linetype_manual(
     name = "Prediction",
@@ -267,7 +267,7 @@ ggplot(incdat_out, aes(time_days, AP_obs, color = id)) +
     values = 20
   ) +
   scale_color_discrete(guide = "none") +
-  facet_wrap(~id, scales = "free") +
+  facet_wrap(~id, scales="free_y") +
   xlab("\n Timestep \n") +
   ylab("\n (13C-CH4/Total CH4) x 100 \n") +
   ggtitle("\n Atom% 13C \n") +
@@ -286,7 +286,7 @@ ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
     aes(time, mt, group = paste(id, P, k)), color = "grey", linetype = 2
   ) +
   geom_line(aes(y = mt, group = id, linetype = ""),
-    linewidth = 1.5
+    size = 1.5
   ) +
   scale_linetype_manual(
     name = "Prediction",
@@ -297,7 +297,7 @@ ggplot(incdat_out, aes(time_days, cal12CH4ml + cal13CH4ml, color = id)) +
     values = 20
   ) +
   scale_color_discrete(guide = "none") +
-  facet_wrap(~id, scales = "free") +
+  facet_wrap(~id, scales="free_y") +
   xlab("\n Timestep \n") +
   ylab("\n Volume (mL) \n") +
   ggtitle("\n Total Methane \n") +
@@ -357,7 +357,7 @@ ggplot(data = dat_new) +
   geom_point(aes(time_days, AP_pred, shape = "New Prediction", color = "New Prediction"),
     size = 3, fill = "#619CFF"
   ) +
-  geom_point(aes(time_days, AP_obs, , shape = "Observations", color = "Observations"),
+  geom_point(aes(time_days, AP_obs, shape = "Observations", color = "Observations"),
     size = 3
   ) +
   geom_point(aes(time_days, oldAPpred, shape = "Old Prediction", color = "Old Prediction"),
