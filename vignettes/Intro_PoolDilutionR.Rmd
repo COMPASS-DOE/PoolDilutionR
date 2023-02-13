@@ -33,10 +33,11 @@ Pool dilution is an isotope tracer technique wherein a biogeochemical pool is ar
 ### Example Data  
 
 For this example we use one of the samples in the `Morris2023` dataset that comes with `PoolDilutionR`.
-It consists of data collected at five time points during a methane pool dilution experiment (see `?Morris2023`).
+It consists of data collected at five time points during a methane pool dilution experiment (see `?Morris2023`). These values have been converted from ppm to ml, although any single unit would suffice (ie., not a concentration). 
 
 **Key to columns**:
 
+* `id` - sample identifier
 * `time_days`	- time (in days) between samples 
 * `cal12CH4ml` - mL's of $^{12}C$-methane, calculated from incubation volume and sample ppm  
 * `cal13CH4ml` - mL's of $^{13}C$-methane, calculated from incubation volume and sample ppm  
