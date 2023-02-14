@@ -11,7 +11,7 @@ To load the package, type `library(PoolDilutionR)`.
 ## Overview
 
 This code calculates gross production and consumption from pool dilution time series data.
-Target pool size (e.g., methane, nitrate) and isotopic composition (e.g., 13C, 15N) are measured from a closed system over time, the model optimizes production rate (P) and the first order rate constant (k), by minimizing error in the model-predicted total pool size (unit volume or mass), as well as the isotopic signature.
+Target pool (e.g., methane, nitrate) and isotopic composition (e.g., 13C, 15N) are measured from a closed system over time, the model optimizes production rate (P) and the first order rate constant (k), by minimizing error in the model-predicted total pool size (unit volume or mass), as well as the isotopic signature.
 The optimization weighs the signal:noise ratio of pool and signatures using measurement precision as well as the magnitude of change over time.
 The calculations used here are based on von Fischer and Hedin 2002, 10.1029/2001GB001448, with some modifications (manuscript link pending).
 
