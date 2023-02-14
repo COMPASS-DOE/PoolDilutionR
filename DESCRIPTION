@@ -11,8 +11,8 @@ Authors@R: c(person("Kendalynn A.", "Morris",
 	        role = "ctb", 
 	        comment = c(ORCID = "0000-0001-9525-4633")))
 Description: Pool dilution is a isotope tracer technique wherein a 
-    biogeochemocal pool is artifically enriched with its heavy isotopologue 
-    and the gross productive and consumptive fluxes of that pool can be 
+    biogeochemical pool is artifically enriched with its heavy isotopologue 
+    and the gross productive and consumptive fluxes of that pool are 
     quantified by the change in pool size and isotopic composition over time. 
     This package calculates gross production and consumption rates from
     closed-system isotopic pool dilution time series data. Pool size 
